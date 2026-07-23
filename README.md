@@ -26,10 +26,36 @@ npm run sync-server
 This app is currently configured to use:
 
 ```text
-http://172.20.10.4:8095
+https://lucky-traders-invoice-mobile.onrender.com
 ```
 
-All devices must be on the same Wi-Fi/hotspot network and able to reach this computer. If the computer IP changes, update `expo.extra.syncServerUrl` in `app.json`.
+All devices must be able to reach this URL. For local Wi-Fi/hotspot sharing, update `expo.extra.syncServerUrl` in `app.json` back to the computer IP.
+
+## Online Sync Server on Render
+
+The Render sync server is:
+
+```text
+https://lucky-traders-invoice-mobile.onrender.com
+```
+
+Use these Render environment variables:
+
+```text
+PORT=8095
+SYNC_DATA_DIR=/data/sync-data
+SYNC_API_KEY=choose-a-long-private-key
+```
+
+If `SYNC_API_KEY` is set on Render, rebuild the APK with the same key:
+
+```powershell
+$env:EXPO_PUBLIC_SYNC_SERVER_URL='https://lucky-traders-invoice-mobile.onrender.com'
+$env:EXPO_PUBLIC_SYNC_API_KEY='choose-a-long-private-key'
+npm run typecheck
+cd android
+.\gradlew.bat assembleRelease
+```
 
 ## Online Sync Server on Koyeb
 

@@ -15,7 +15,7 @@
       "assets/*"
     ],
     "extra": {
-      "syncServerUrl": "http://172.20.10.4:8095",
+      "syncServerUrl": "https://lucky-traders-invoice-mobile.onrender.com",
       "syncApiKey": ""
     },
     "ios": {
