@@ -51,7 +51,7 @@ If `SYNC_API_KEY` is set on Render, rebuild the APK with the same key:
 
 ```powershell
 $env:EXPO_PUBLIC_SYNC_SERVER_URL='https://lucky-traders-invoice-mobile.onrender.com'
-$env:EXPO_PUBLIC_SYNC_API_KEY='rnd_G9Zcn4g1oLXtfa0rEYjYSC3SSsnB'
+$env:EXPO_PUBLIC_SYNC_API_KEY='same-key-as-render'
 npm run typecheck
 cd android
 .\gradlew.bat assembleRelease
@@ -78,8 +78,8 @@ SYNC_API_KEY=choose-a-long-private-key
 After Koyeb gives the app URL, rebuild the APK with the same URL and key:
 
 ```powershell
-$env:EXPO_PUBLIC_SYNC_SERVER_URL='https://your-koyeb-app.koyeb.app'
-$env:EXPO_PUBLIC_SYNC_API_KEY='choose-a-long-private-key'
+$env:EXPO_PUBLIC_SYNC_SERVER_URL='https://lucky-traders-invoice-mobile.onrender.com'
+$env:EXPO_PUBLIC_SYNC_API_KEY='same-key-as-koyeb'
 npm run typecheck
 cd android
 .\gradlew.bat assembleRelease
