@@ -4,10 +4,13 @@ const path = require('path');
 const os = require('os');
 
 const PORT = Number(process.env.LUCKY_TRADERS_SYNC_PORT || process.env.PORT || 8095);
-const DATA_DIR = path.join(__dirname, 'sync-data');
+const DATA_DIR = process.env.SYNC_DATA_DIR
+  ? path.resolve(process.env.SYNC_DATA_DIR)
+  : path.join(__dirname, 'sync-data');
 const DB_FILE = path.join(DATA_DIR, 'sync-db.json');
 const FILE_DIR = path.join(DATA_DIR, 'files');
 const MAX_BODY_BYTES = 80 * 1024 * 1024;
+const SYNC_API_KEY = String(process.env.LUCKY_TRADERS_SYNC_API_KEY || process.env.SYNC_API_KEY || '').trim();
 
 function makeEmptyStore() {
   return {
@@ -63,10 +66,18 @@ function sendJson(res, status, payload) {
   res.writeHead(status, {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type,Accept',
+    'Access-Control-Allow-Headers': 'Content-Type,Accept,X-API-Key,Authorization',
     'Content-Type': 'application/json',
   });
   res.end(JSON.stringify(payload));
+}
+
+function isAuthorized(req) {
+  if (!SYNC_API_KEY) return true;
+
+  const apiKey = String(req.headers['x-api-key'] || '').trim();
+  const authorization = String(req.headers.authorization || '').trim();
+  return apiKey === SYNC_API_KEY || authorization === `Bearer ${SYNC_API_KEY}`;
 }
 
 function parseRequestUrl(req) {
@@ -312,6 +323,11 @@ const server = http.createServer(async (req, res) => {
   }
 
   const requestUrl = parseRequestUrl(req);
+
+  if (!isAuthorized(req)) {
+    sendJson(res, 401, { error: 'Unauthorized.' });
+    return;
+  }
 
   if (req.method === 'GET' && requestUrl.pathname === '/file') {
     const kind = requestUrl.searchParams.get('kind');

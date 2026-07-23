@@ -1,0 +1,11 @@
+.git
+.expo
+node_modules
+dist
+web-build
+sync-data
+android
+assets
+src
+*.log
+*.keystore

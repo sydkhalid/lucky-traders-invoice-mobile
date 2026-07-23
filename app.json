@@ -15,7 +15,8 @@
       "assets/*"
     ],
     "extra": {
-      "syncServerUrl": "http://172.20.10.4:8095"
+      "syncServerUrl": "http://172.20.10.4:8095",
+      "syncApiKey": ""
     },
     "ios": {
       "supportsTablet": true

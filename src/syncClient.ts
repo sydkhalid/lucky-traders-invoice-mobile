@@ -41,7 +41,7 @@ export type SyncServerResponse = {
 };
 
 export function getSyncServerUrl() {
-  const extra = (Constants.expoConfig?.extra || {}) as { syncServerUrl?: string };
+  const extra = (Constants.expoConfig?.extra || {}) as { syncServerUrl?: string; syncApiKey?: string };
   if (extra.syncServerUrl?.trim()) {
     return extra.syncServerUrl.trim().replace(/\/+$/, '');
   }
@@ -61,6 +61,28 @@ export function getSyncServerUrl() {
   return `http://${host || '127.0.0.1'}:8095`;
 }
 
+function getSyncApiKey() {
+  const extra = (Constants.expoConfig?.extra || {}) as { syncApiKey?: string };
+  return extra.syncApiKey?.trim() || '';
+}
+
+function getSyncHeaders(withContentType = false) {
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+  };
+  const apiKey = getSyncApiKey();
+
+  if (withContentType) {
+    headers['Content-Type'] = 'application/json';
+  }
+
+  if (apiKey) {
+    headers['X-API-Key'] = apiKey;
+  }
+
+  return headers;
+}
+
 export async function getSyncDeviceId() {
   const stored = await AsyncStorage.getItem(SYNC_DEVICE_ID_STORAGE_KEY);
   if (stored) return stored;
@@ -72,7 +94,7 @@ export async function getSyncDeviceId() {
 
 export async function fetchSyncSnapshot() {
   const response = await fetch(`${getSyncServerUrl()}/sync`, {
-    headers: { Accept: 'application/json' },
+    headers: getSyncHeaders(),
   });
 
   if (!response.ok) {
@@ -85,10 +107,7 @@ export async function fetchSyncSnapshot() {
 export async function pushSyncSnapshot(snapshot: SyncDatabaseSnapshot, baseRevision: number, deviceId: string) {
   const response = await fetch(`${getSyncServerUrl()}/sync`, {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
+    headers: getSyncHeaders(true),
     body: JSON.stringify({
       baseRevision,
       deviceId,
@@ -184,10 +203,7 @@ async function uploadSyncFile({
   });
   const response = await fetch(`${getSyncServerUrl()}/file`, {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
+    headers: getSyncHeaders(true),
     body: JSON.stringify({
       kind,
       id,
@@ -205,7 +221,7 @@ async function uploadSyncFile({
 async function downloadSyncFile(kind: string, id: string, fallbackFileName: string) {
   try {
     const response = await fetch(`${getSyncServerUrl()}/file?kind=${encodeURIComponent(kind)}&id=${encodeURIComponent(id)}`, {
-      headers: { Accept: 'application/json' },
+      headers: getSyncHeaders(),
     });
 
     if (!response.ok) return '';

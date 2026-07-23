@@ -31,6 +31,40 @@ http://172.20.10.4:8095
 
 All devices must be on the same Wi-Fi/hotspot network and able to reach this computer. If the computer IP changes, update `expo.extra.syncServerUrl` in `app.json`.
 
+## Online Sync Server on Koyeb
+
+The same `sync-server.js` can run online with the included `Dockerfile`. For Koyeb, deploy this GitHub repository as a Dockerfile service and add a persistent Volume mounted at:
+
+```text
+/data
+```
+
+Use these Koyeb environment variables:
+
+```text
+PORT=8095
+SYNC_DATA_DIR=/data/sync-data
+SYNC_API_KEY=choose-a-long-private-key
+```
+
+`/health` stays public for Koyeb health checks. `/sync` and `/file` require the API key when `SYNC_API_KEY` or `LUCKY_TRADERS_SYNC_API_KEY` is set.
+
+After Koyeb gives the app URL, rebuild the APK with the same URL and key:
+
+```powershell
+$env:EXPO_PUBLIC_SYNC_SERVER_URL='https://your-koyeb-app.koyeb.app'
+$env:EXPO_PUBLIC_SYNC_API_KEY='choose-a-long-private-key'
+npm run typecheck
+cd android
+.\gradlew.bat assembleRelease
+```
+
+The release APK will be under:
+
+```text
+android/app/build/outputs/apk/release/
+```
+
 The mobile app still keeps a local AsyncStorage cache, but it also pushes and pulls these shared tables:
 
 ```text
