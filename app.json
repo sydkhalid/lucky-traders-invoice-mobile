@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Lucky Traders Invoice",
+    "slug": "lucky-traders-invoice-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo1111.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logo1111.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f4f6f8"
+    },
+    "assetBundlePatterns": [
+      "assets/*"
+    ],
+    "extra": {
+      "syncServerUrl": "http://172.20.10.4:8095"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo1111.png",
+        "backgroundColor": "#f4f6f8"
+      },
+      "package": "com.luckytraders.invoice"
+    },
+    "plugins": [
+      "@react-native-community/datetimepicker",
+      "expo-asset"
+    ]
+  }
+}

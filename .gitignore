@@ -1,0 +1,17 @@
+node_modules/
+.expo/
+dist/
+web-build/
+sync-data/
+.env
+.env.*
+*.log
+npm-debug.*
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+android/.kotlin/
