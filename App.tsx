@@ -138,6 +138,71 @@ function parseStoredStringList(value: string | null) {
   }
 }
 
+const defaultSavedInvoices = sortSavedInvoicesByInvoiceDate(seedInvoiceDocuments);
+const defaultNextInvoiceSequence = getNextInvoiceSequenceFromInvoices(defaultSavedInvoices, 1);
+const defaultSeedUserTableJson = JSON.stringify(createSeedUserTable());
+const defaultManagerWorkbookJson = JSON.stringify(createDefaultManagerWorkbook());
+
+function hasLocalDataBeyondSeed(snapshot: SyncDatabaseSnapshot) {
+  return (
+    JSON.stringify(normalizeUserTable(snapshot.userTable)) !== defaultSeedUserTableJson ||
+    recordsChangedFromSeed(snapshot.products, seedProductDocuments, 'key') ||
+    clientsChangedFromSeed(snapshot.clients) ||
+    recordsChangedFromSeed(snapshot.suppliers, seedSupplierDocuments, 'id') ||
+    recordsChangedFromSeed(snapshot.purchases, seedPurchaseDocuments, 'id') ||
+    recordsChangedFromSeed(snapshot.employees, seedEmployeeDocuments, 'id') ||
+    recordsChangedFromSeed(snapshot.salaries, seedSalaryDocuments, 'id') ||
+    recordsChangedFromSeed(snapshot.expenses, seedExpenseDocuments, 'id') ||
+    recordsChangedFromSeed(snapshot.payments, seedPaymentDocuments, 'id') ||
+    recordsChangedFromSeed(snapshot.supplierPayments, seedSupplierPaymentDocuments, 'id') ||
+    recordsChangedFromSeed(snapshot.savedInvoices, defaultSavedInvoices, 'id') ||
+    Number(snapshot.nextInvoiceSequence) > defaultNextInvoiceSequence ||
+    Number(snapshot.managerNonGstSequence) > 1 ||
+    JSON.stringify(normalizeManagerWorkbook(snapshot.managerWorkbook)) !== defaultManagerWorkbookJson
+  );
+}
+
+function recordsChangedFromSeed<T extends object>(records: T[], seedRecords: T[], keyName: keyof T) {
+  if (!Array.isArray(records)) return seedRecords.length > 0;
+
+  const seedByKey = new Map(seedRecords.map((record) => [String(record[keyName] || ''), JSON.stringify(record)]));
+  const seenKeys = new Set<string>();
+
+  for (const record of records) {
+    const key = String(record[keyName] || '');
+    seenKeys.add(key);
+    if (!seedByKey.has(key)) return true;
+    if (JSON.stringify(record) !== seedByKey.get(key)) return true;
+  }
+
+  return seedRecords.some((record) => !seenKeys.has(String(record[keyName] || '')));
+}
+
+function clientsChangedFromSeed(clients: ClientDocument[]) {
+  if (!Array.isArray(clients)) return seedClientDocuments.length > 0;
+
+  const seedById = new Map(seedClientDocuments.map((client) => [client.id, JSON.stringify(client)]));
+  const seenSeedIds = new Set<string>();
+
+  for (const client of clients) {
+    if (seedById.has(client.id)) {
+      seenSeedIds.add(client.id);
+      if (JSON.stringify(client) !== seedById.get(client.id)) return true;
+      continue;
+    }
+
+    const invoiceImportOnly =
+      client.createdBy === 'Invoice Import' &&
+      client.createdByRole === 'system' &&
+      !client.updatedBy &&
+      !client.updatedByRole;
+
+    if (!invoiceImportOnly) return true;
+  }
+
+  return seedClientDocuments.some((client) => !seenSeedIds.has(client.id));
+}
+
 function normalizeClientName(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, ' ');
 }
@@ -1036,9 +1101,22 @@ export default function App() {
           return;
         }
 
+        const localSnapshot = syncSnapshotRef.current || syncSnapshot;
+        if (hasLocalDataBeyondSeed(localSnapshot)) {
+          const response = await publishLocalDataToServer(deviceId, remote.revision);
+          if (cancelled) return;
+          await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
+          setServerDataError('');
+          setSyncStatus('online');
+          setServerDataReady(true);
+          setSyncReady(true);
+          console.warn(`Initialized empty sync server at ${getSyncServerUrl()} with local device data. Revision ${response.revision}.`);
+          return;
+        }
+
         syncDirtyRef.current = false;
         await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
-        setServerDataError('Server has no data yet. Send data from the main device through Device Sharing, then retry.');
+        setServerDataError('Server has no data yet. If this is the main device, send this device data to start server sync.');
         setServerDataReady(false);
         setSyncStatus('offline');
         setSyncReady(false);
@@ -1122,6 +1200,53 @@ export default function App() {
     setServerDataRetry((value) => value + 1);
   }
 
+  async function publishLocalDataToServer(deviceId: string, baseRevision: number) {
+    const localSnapshot = syncSnapshotRef.current || syncSnapshot;
+    const response = await pushSyncSnapshot(localSnapshot, baseRevision, deviceId);
+    const syncedSnapshot = response.data || localSnapshot;
+
+    rememberSyncedSnapshot(syncedSnapshot);
+    uploadSnapshotFiles(syncedSnapshot).catch((error) => {
+      console.warn('Unable to upload synced files', error);
+    });
+    syncRevisionRef.current = response.revision;
+    setSyncRevision(response.revision);
+
+    if (response.mode === 'merge' && response.data) {
+      applySyncSnapshot(response.data);
+    }
+
+    syncDirtyRef.current = false;
+    return response;
+  }
+
+  async function sendCurrentDeviceDataFromGate() {
+    if (!localDatabasesHydrated || syncPushingRef.current) return;
+
+    try {
+      syncPushingRef.current = true;
+      setManualSyncAction('send');
+      setSyncStatus('syncing');
+      setServerDataError('');
+      const deviceId = syncDeviceId || await getSyncDeviceId();
+      if (!syncDeviceId) setSyncDeviceId(deviceId);
+      const response = await publishLocalDataToServer(deviceId, syncRevisionRef.current);
+      await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
+      setSyncStatus('online');
+      setServerDataReady(true);
+      setSyncReady(true);
+      Alert.alert('Server sync started', `This device data is now on the server at revision ${response.revision}.`);
+    } catch (error) {
+      syncDirtyRef.current = true;
+      setSyncStatus('offline');
+      setServerDataError(error instanceof Error ? error.message : 'Unable to send this device data.');
+      Alert.alert('Send failed', error instanceof Error ? error.message : 'Unable to send this device data.');
+    } finally {
+      syncPushingRef.current = false;
+      setManualSyncAction(null);
+    }
+  }
+
   if (!serverDataReady) {
     return (
       <SafeAreaProvider>
@@ -1153,6 +1278,14 @@ export default function App() {
               <Pressable style={styles.loginButton} onPress={retryServerFetch}>
                 <MaterialCommunityIcons name="refresh" size={18} color="#ffffff" />
                 <Text style={styles.loginButtonText}>Retry Server Fetch</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.loginButton, styles.loginSuccessButton, (!localDatabasesHydrated || syncPushingRef.current) && styles.navButtonDisabled]}
+                onPress={sendCurrentDeviceDataFromGate}
+                disabled={!localDatabasesHydrated || syncPushingRef.current}
+              >
+                <MaterialCommunityIcons name="upload-network-outline" size={18} color="#ffffff" />
+                <Text style={styles.loginButtonText}>{manualSyncAction === 'send' ? 'Sending Data...' : 'Send This Device Data'}</Text>
               </Pressable>
             </View>
           </View>
@@ -1212,18 +1345,7 @@ export default function App() {
       setSyncStatus('syncing');
       const deviceId = syncDeviceId || await getSyncDeviceId();
       if (!syncDeviceId) setSyncDeviceId(deviceId);
-      const response = await pushSyncSnapshot(syncSnapshotRef.current || syncSnapshot, syncRevisionRef.current, deviceId);
-      const syncedSnapshot = response.data || syncSnapshotRef.current || syncSnapshot;
-      rememberSyncedSnapshot(syncedSnapshot);
-      uploadSnapshotFiles(syncedSnapshot).catch((error) => {
-        console.warn('Unable to upload synced files', error);
-      });
-      syncRevisionRef.current = response.revision;
-      setSyncRevision(response.revision);
-      if (response.mode === 'merge' && response.data) {
-        applySyncSnapshot(response.data);
-      }
-      syncDirtyRef.current = false;
+      const response = await publishLocalDataToServer(deviceId, syncRevisionRef.current);
       setSyncStatus('online');
       Alert.alert('Data sent', `Sharing revision ${response.revision} is ready.`);
     } catch (error) {

@@ -114,6 +114,7 @@ export const styles = StyleSheet.create({
     backgroundColor: palette.navy,
     ...cardShadow,
   },
+  loginSuccessButton: { backgroundColor: palette.green },
   loginButtonText: { color: '#ffffff', fontSize: 15, fontWeight: '900' },
   loginRoleButtons: { flexDirection: 'row', gap: 10, paddingTop: 2 },
   loginRoleButton: {
