@@ -5,7 +5,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { logo } from './src/assets';
 import {
   CLIENT_STORAGE_KEY,
@@ -434,6 +434,9 @@ export default function App() {
   const [syncStatus, setSyncStatus] = useState<'checking' | 'online' | 'offline' | 'syncing'>('checking');
   const [syncDeviceId, setSyncDeviceId] = useState('');
   const [manualSyncAction, setManualSyncAction] = useState<'send' | 'receive' | null>(null);
+  const [serverDataReady, setServerDataReady] = useState(false);
+  const [serverDataError, setServerDataError] = useState('');
+  const [serverDataRetry, setServerDataRetry] = useState(0);
   const syncRevisionRef = useRef(0);
   const syncApplyingRemoteRef = useRef(false);
   const syncStartedRef = useRef(false);
@@ -1007,59 +1010,46 @@ export default function App() {
     async function initialSync() {
       try {
         setSyncStatus('syncing');
+        setServerDataError('');
+        setServerDataReady(false);
+
         const storedDeviceId = await getStoredSyncDeviceId();
-        const pendingInitialPull = await AsyncStorage.getItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
-        const shouldPullServerFirst = !storedDeviceId || pendingInitialPull === '1';
         if (!storedDeviceId) {
           await AsyncStorage.setItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY, '1');
         }
         const deviceId = storedDeviceId || await getSyncDeviceId();
         if (!syncDeviceId) setSyncDeviceId(deviceId);
 
-        let baseRevision = syncRevisionRef.current;
-        if (shouldPullServerFirst) {
-          const remote = await fetchSyncSnapshot();
-          if (cancelled) return;
-
-          syncRevisionRef.current = remote.revision;
-          setSyncRevision(remote.revision);
-          baseRevision = remote.revision;
-          if (remote.data) {
-            rememberSyncedSnapshot(remote.data);
-            applySyncSnapshot(remote.data);
-            syncDirtyRef.current = false;
-            await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
-            setSyncStatus('online');
-            setSyncReady(true);
-            return;
-          }
-        }
-
-        const response = await pushSyncSnapshot(syncSnapshot, baseRevision, deviceId);
+        const remote = await fetchSyncSnapshot();
         if (cancelled) return;
 
-        const syncedSnapshot = response.data || syncSnapshot;
-        rememberSyncedSnapshot(syncedSnapshot);
-        uploadSnapshotFiles(syncedSnapshot).catch((error) => {
-          console.warn('Unable to upload synced files', error);
-        });
-        syncRevisionRef.current = response.revision;
-        setSyncRevision(response.revision);
-        if (response.data) {
-          applySyncSnapshot(response.data);
-        }
-        syncDirtyRef.current = false;
-        if (shouldPullServerFirst) {
+        syncRevisionRef.current = remote.revision;
+        setSyncRevision(remote.revision);
+        if (remote.data) {
+          rememberSyncedSnapshot(remote.data);
+          applySyncSnapshot(remote.data);
+          syncDirtyRef.current = false;
           await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
+          setSyncStatus('online');
+          setServerDataReady(true);
+          setSyncReady(true);
+          return;
         }
-        setSyncStatus('online');
-        setSyncReady(true);
+
+        syncDirtyRef.current = false;
+        await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
+        setServerDataError('Server has no data yet. Send data from the main device through Device Sharing, then retry.');
+        setServerDataReady(false);
+        setSyncStatus('offline');
+        setSyncReady(false);
       } catch (error) {
         console.warn(`Common sync is offline at ${getSyncServerUrl()}`, error);
         if (!cancelled) {
-          syncDirtyRef.current = true;
+          setServerDataError(error instanceof Error ? error.message : 'Unable to fetch server data.');
+          setServerDataReady(false);
+          syncDirtyRef.current = false;
           setSyncStatus('offline');
-          setSyncReady(true);
+          setSyncReady(false);
         }
       }
     }
@@ -1068,48 +1058,13 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [localDatabasesHydrated, syncSnapshot]);
+  }, [localDatabasesHydrated, serverDataRetry, syncSnapshot]);
 
   useEffect(() => {
     if (!localDatabasesHydrated || !syncReady || syncApplyingRemoteRef.current) return;
+    if (isSyncedSnapshot(syncSnapshot)) return;
 
-    const timer = setTimeout(async () => {
-      if (syncApplyingRemoteRef.current || syncPushingRef.current) return;
-      if (isSyncedSnapshot(syncSnapshot)) {
-        syncDirtyRef.current = false;
-        setSyncStatus('online');
-        return;
-      }
-
-      try {
-        syncDirtyRef.current = true;
-        syncPushingRef.current = true;
-        setSyncStatus('syncing');
-        const deviceId = await getSyncDeviceId();
-        const response = await pushSyncSnapshot(syncSnapshot, syncRevisionRef.current, deviceId);
-        const syncedSnapshot = response.data || syncSnapshot;
-        rememberSyncedSnapshot(syncedSnapshot);
-        uploadSnapshotFiles(syncedSnapshot).catch((error) => {
-          console.warn('Unable to upload synced files', error);
-        });
-        syncRevisionRef.current = response.revision;
-        setSyncRevision(response.revision);
-        if (response.mode === 'merge' && response.data) {
-          applySyncSnapshot(response.data);
-        }
-        syncDirtyRef.current = false;
-        setSyncStatus('online');
-      } catch (error) {
-        console.warn(`Unable to push common sync to ${getSyncServerUrl()}`, error);
-        setSyncStatus('offline');
-      } finally {
-        syncPushingRef.current = false;
-      }
-    }, 1200);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    syncDirtyRef.current = true;
   }, [localDatabasesHydrated, syncReady, syncSnapshot]);
 
   useEffect(() => {
@@ -1125,23 +1080,7 @@ export default function App() {
           setSyncRevision(response.revision);
           rememberSyncedSnapshot(response.data);
           applySyncSnapshot(response.data);
-        }
-        if (syncDirtyRef.current && syncSnapshotRef.current && !syncApplyingRemoteRef.current && !isSyncedSnapshot(syncSnapshotRef.current)) {
-          syncPushingRef.current = true;
-          const deviceId = await getSyncDeviceId();
-          const pushed = await pushSyncSnapshot(syncSnapshotRef.current, syncRevisionRef.current, deviceId);
-          const syncedSnapshot = pushed.data || syncSnapshotRef.current;
-          rememberSyncedSnapshot(syncedSnapshot);
-          uploadSnapshotFiles(syncedSnapshot).catch((error) => {
-            console.warn('Unable to upload synced files', error);
-          });
-          syncRevisionRef.current = pushed.revision;
-          setSyncRevision(pushed.revision);
-          if (pushed.mode === 'merge' && pushed.data) {
-            applySyncSnapshot(pushed.data);
-          }
           syncDirtyRef.current = false;
-          syncPushingRef.current = false;
         }
         setSyncStatus('online');
       } catch (error) {
@@ -1172,33 +1111,89 @@ export default function App() {
     });
   }, [signedInUser]);
 
+  function retryServerFetch() {
+    syncStartedRef.current = false;
+    syncDirtyRef.current = false;
+    syncPushingRef.current = false;
+    setServerDataError('');
+    setServerDataReady(false);
+    setSyncReady(false);
+    setSyncStatus('checking');
+    setServerDataRetry((value) => value + 1);
+  }
+
+  if (!serverDataReady) {
+    return (
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.loginSafeArea}>
+          <View style={{ flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#0f2742' }}>
+            <View style={styles.loginBrandBlock}>
+              <Image source={logo} style={styles.loginLogo} />
+              <Text style={styles.loginKicker}>LUCKY TRADERS</Text>
+              <Text style={styles.loginTitle}>Server Sync Required</Text>
+              <Text style={styles.loginSubtitle}>
+                This app loads data from the server only. Local saved data is not shown on startup.
+              </Text>
+            </View>
+            <View style={[styles.loginCard, { marginTop: 18 }]}>
+              <View style={styles.loginFormHeader}>
+                <MaterialCommunityIcons
+                  name={syncStatus === 'offline' ? 'cloud-off-outline' : 'cloud-sync-outline'}
+                  size={24}
+                  color={syncStatus === 'offline' ? '#b42318' : '#163a5f'}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.loginFormTitle}>{syncStatus === 'offline' ? 'Server data not loaded' : 'Fetching server data'}</Text>
+                  <Text style={styles.loginFormHint}>{getSyncServerUrl()}</Text>
+                </View>
+              </View>
+              <Text style={styles.mutedText}>
+                {serverDataError || 'Please wait while the app fetches the latest server snapshot.'}
+              </Text>
+              <Pressable style={styles.loginButton} onPress={retryServerFetch}>
+                <MaterialCommunityIcons name="refresh" size={18} color="#ffffff" />
+                <Text style={styles.loginButtonText}>Retry Server Fetch</Text>
+              </Pressable>
+            </View>
+          </View>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    );
+  }
+
   if (!signedInUser) {
-    return <LoginScreen userTable={userTable} usersReady={userDatabaseHydrated} onLogin={setSignedInUser} />;
+    return (
+      <SafeAreaProvider>
+        <LoginScreen userTable={userTable} usersReady={userDatabaseHydrated} onLogin={setSignedInUser} />
+      </SafeAreaProvider>
+    );
   }
 
   if (signedInUser.role === 'manager') {
     return (
-      <ManagerNonGstBillScreen
-        user={signedInUser}
-        managerWorkbook={managerWorkbook}
-        managerSequence={managerNonGstSequence}
-        managerWorkbookReady={managerWorkbookHydrated}
-        onWorkbookChange={setManagerWorkbook}
-        onSequenceChange={setManagerNonGstSequence}
-        syncStatus={syncStatus}
-        syncRevision={syncRevision}
-        syncServerUrl={getSyncServerUrl()}
-        syncDeviceId={syncDeviceId}
-        manualSyncAction={manualSyncAction}
-        onSendDeviceShare={sendDeviceShareData}
-        onReceiveDeviceShare={receiveDeviceShareData}
-        onLogout={() => {
-          setActiveMenu('dashboard');
-          setActiveStep(0);
-          setSideMenuOpen(false);
-          setSignedInUser(null);
-        }}
-      />
+      <SafeAreaProvider>
+        <ManagerNonGstBillScreen
+          user={signedInUser}
+          managerWorkbook={managerWorkbook}
+          managerSequence={managerNonGstSequence}
+          managerWorkbookReady={managerWorkbookHydrated}
+          onWorkbookChange={setManagerWorkbook}
+          onSequenceChange={setManagerNonGstSequence}
+          syncStatus={syncStatus}
+          syncRevision={syncRevision}
+          syncServerUrl={getSyncServerUrl()}
+          syncDeviceId={syncDeviceId}
+          manualSyncAction={manualSyncAction}
+          onSendDeviceShare={sendDeviceShareData}
+          onReceiveDeviceShare={receiveDeviceShareData}
+          onLogout={() => {
+            setActiveMenu('dashboard');
+            setActiveStep(0);
+            setSideMenuOpen(false);
+            setSignedInUser(null);
+          }}
+        />
+      </SafeAreaProvider>
     );
   }
 
@@ -2306,9 +2301,10 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="light" />
-      <KeyboardAvoidingView style={styles.keyboard} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar style="light" />
+        <KeyboardAvoidingView style={styles.keyboard} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.header}>
           <Pressable style={styles.menuButton} onPress={() => setSideMenuOpen(true)}>
             <MaterialCommunityIcons name="menu" size={24} color="#ffffff" />
@@ -2668,7 +2664,8 @@ export default function App() {
             </View>
           </View>
         ) : null}
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

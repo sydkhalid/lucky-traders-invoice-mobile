@@ -15,6 +15,7 @@ import type { SavedInvoiceDocument } from './types';
 
 const SYNC_DEVICE_ID_STORAGE_KEY = 'lucky-traders.syncDeviceId.v1';
 const SYNC_FILE_DIR = 'lucky-traders-sync-files';
+const SYNC_REQUEST_TIMEOUT_MS = 20000;
 
 export type SyncDatabaseSnapshot = {
   userTable: NoSqlUserTable;
@@ -97,7 +98,7 @@ export async function getStoredSyncDeviceId() {
 }
 
 export async function fetchSyncSnapshot() {
-  const response = await fetch(`${getSyncServerUrl()}/sync`, {
+  const response = await fetchWithTimeout(`${getSyncServerUrl()}/sync`, {
     headers: getSyncHeaders(),
   });
 
@@ -109,7 +110,7 @@ export async function fetchSyncSnapshot() {
 }
 
 export async function pushSyncSnapshot(snapshot: SyncDatabaseSnapshot, baseRevision: number, deviceId: string) {
-  const response = await fetch(`${getSyncServerUrl()}/sync`, {
+  const response = await fetchWithTimeout(`${getSyncServerUrl()}/sync`, {
     method: 'POST',
     headers: getSyncHeaders(true),
     body: JSON.stringify({
@@ -205,7 +206,7 @@ async function uploadSyncFile({
   const base64 = await FileSystem.readAsStringAsync(uri, {
     encoding: FileSystem.EncodingType.Base64,
   });
-  const response = await fetch(`${getSyncServerUrl()}/file`, {
+  const response = await fetchWithTimeout(`${getSyncServerUrl()}/file`, {
     method: 'POST',
     headers: getSyncHeaders(true),
     body: JSON.stringify({
@@ -224,7 +225,7 @@ async function uploadSyncFile({
 
 async function downloadSyncFile(kind: string, id: string, fallbackFileName: string) {
   try {
-    const response = await fetch(`${getSyncServerUrl()}/file?kind=${encodeURIComponent(kind)}&id=${encodeURIComponent(id)}`, {
+    const response = await fetchWithTimeout(`${getSyncServerUrl()}/file?kind=${encodeURIComponent(kind)}&id=${encodeURIComponent(id)}`, {
       headers: getSyncHeaders(),
     });
 
@@ -275,4 +276,24 @@ async function localFileExists(uri: string) {
 
 function safeFileName(value: string) {
   return value.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-|-$/g, '').slice(0, 160) || 'file';
+}
+
+async function fetchWithTimeout(url: string, options: RequestInit = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SYNC_REQUEST_TIMEOUT_MS);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error(`Sync request timed out after ${SYNC_REQUEST_TIMEOUT_MS / 1000} seconds.`);
+    }
+
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
