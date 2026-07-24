@@ -1,6 +1,9 @@
 node_modules/
 .expo/
 dist/
+desktop-dist/
+desktop-build/
+desktop-release/
 web-build/
 sync-data/
 .env

@@ -279,3 +279,23 @@ Saved invoices can be managed from the `Invoices` side menu item. Use `Add Invoi
 ```text
 Preview full invoice | Print | Share PDF | Edit invoice | Delete invoice
 ```
+
+## Desktop Version
+
+The Windows desktop version uses Electron around the Expo web export.
+
+```text
+npm run desktop:build
+```
+
+The generated desktop app is written to:
+
+```text
+desktop-release\Lucky Traders Invoice\Lucky Traders Invoice.exe
+```
+
+For local desktop testing without packaging, run:
+
+```text
+npm run desktop:start
+```
