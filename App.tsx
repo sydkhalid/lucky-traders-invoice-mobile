@@ -97,6 +97,7 @@ import {
   fetchSyncSnapshot,
   getSyncDeviceId,
   getSyncServerUrl,
+  getStoredSyncDeviceId,
   hydrateSnapshotFiles,
   pushSyncSnapshot,
   uploadSnapshotFiles,
@@ -118,6 +119,8 @@ const emptySupplierForm: SupplierForm = {
   phone: '',
   email: '',
 };
+
+const NEW_DEVICE_SERVER_PULL_PENDING_KEY = 'lucky-traders.newDeviceServerPullPending.v1';
 
 const emptyProfileForm: ProfileForm = {
   name: '',
@@ -437,6 +440,7 @@ export default function App() {
   const syncPushingRef = useRef(false);
   const syncDirtyRef = useRef(false);
   const syncSnapshotRef = useRef<SyncDatabaseSnapshot | null>(null);
+  const syncLastSnapshotRef = useRef('');
 
   const totals = useMemo(() => calculateInvoice(invoice, products), [invoice, products]);
   const users = useMemo(() => flattenUsers(userTable), [userTable]);
@@ -495,6 +499,18 @@ export default function App() {
   useEffect(() => {
     syncSnapshotRef.current = syncSnapshot;
   }, [syncSnapshot]);
+
+  function getSyncSnapshotFingerprint(snapshot: SyncDatabaseSnapshot) {
+    return JSON.stringify(snapshot);
+  }
+
+  function rememberSyncedSnapshot(snapshot: SyncDatabaseSnapshot) {
+    syncLastSnapshotRef.current = getSyncSnapshotFingerprint(snapshot);
+  }
+
+  function isSyncedSnapshot(snapshot: SyncDatabaseSnapshot) {
+    return syncLastSnapshotRef.current === getSyncSnapshotFingerprint(snapshot);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -991,17 +1007,50 @@ export default function App() {
     async function initialSync() {
       try {
         setSyncStatus('syncing');
-        const deviceId = await getSyncDeviceId();
-        const response = await pushSyncSnapshot(syncSnapshot, syncRevisionRef.current, deviceId);
+        const storedDeviceId = await getStoredSyncDeviceId();
+        const pendingInitialPull = await AsyncStorage.getItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
+        const shouldPullServerFirst = !storedDeviceId || pendingInitialPull === '1';
+        if (!storedDeviceId) {
+          await AsyncStorage.setItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY, '1');
+        }
+        const deviceId = storedDeviceId || await getSyncDeviceId();
+        if (!syncDeviceId) setSyncDeviceId(deviceId);
+
+        let baseRevision = syncRevisionRef.current;
+        if (shouldPullServerFirst) {
+          const remote = await fetchSyncSnapshot();
+          if (cancelled) return;
+
+          syncRevisionRef.current = remote.revision;
+          setSyncRevision(remote.revision);
+          baseRevision = remote.revision;
+          if (remote.data) {
+            rememberSyncedSnapshot(remote.data);
+            applySyncSnapshot(remote.data);
+            syncDirtyRef.current = false;
+            await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
+            setSyncStatus('online');
+            setSyncReady(true);
+            return;
+          }
+        }
+
+        const response = await pushSyncSnapshot(syncSnapshot, baseRevision, deviceId);
         if (cancelled) return;
 
-        uploadSnapshotFiles(syncSnapshot).catch((error) => {
+        const syncedSnapshot = response.data || syncSnapshot;
+        rememberSyncedSnapshot(syncedSnapshot);
+        uploadSnapshotFiles(syncedSnapshot).catch((error) => {
           console.warn('Unable to upload synced files', error);
         });
         syncRevisionRef.current = response.revision;
         setSyncRevision(response.revision);
         if (response.data) {
           applySyncSnapshot(response.data);
+        }
+        syncDirtyRef.current = false;
+        if (shouldPullServerFirst) {
+          await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
         }
         setSyncStatus('online');
         setSyncReady(true);
@@ -1026,6 +1075,11 @@ export default function App() {
 
     const timer = setTimeout(async () => {
       if (syncApplyingRemoteRef.current || syncPushingRef.current) return;
+      if (isSyncedSnapshot(syncSnapshot)) {
+        syncDirtyRef.current = false;
+        setSyncStatus('online');
+        return;
+      }
 
       try {
         syncDirtyRef.current = true;
@@ -1033,7 +1087,9 @@ export default function App() {
         setSyncStatus('syncing');
         const deviceId = await getSyncDeviceId();
         const response = await pushSyncSnapshot(syncSnapshot, syncRevisionRef.current, deviceId);
-        uploadSnapshotFiles(syncSnapshot).catch((error) => {
+        const syncedSnapshot = response.data || syncSnapshot;
+        rememberSyncedSnapshot(syncedSnapshot);
+        uploadSnapshotFiles(syncedSnapshot).catch((error) => {
           console.warn('Unable to upload synced files', error);
         });
         syncRevisionRef.current = response.revision;
@@ -1067,13 +1123,16 @@ export default function App() {
         if (response.revision > syncRevisionRef.current && response.data) {
           syncRevisionRef.current = response.revision;
           setSyncRevision(response.revision);
+          rememberSyncedSnapshot(response.data);
           applySyncSnapshot(response.data);
         }
-        if (syncDirtyRef.current && syncSnapshotRef.current && !syncApplyingRemoteRef.current) {
+        if (syncDirtyRef.current && syncSnapshotRef.current && !syncApplyingRemoteRef.current && !isSyncedSnapshot(syncSnapshotRef.current)) {
           syncPushingRef.current = true;
           const deviceId = await getSyncDeviceId();
           const pushed = await pushSyncSnapshot(syncSnapshotRef.current, syncRevisionRef.current, deviceId);
-          uploadSnapshotFiles(syncSnapshotRef.current).catch((error) => {
+          const syncedSnapshot = pushed.data || syncSnapshotRef.current;
+          rememberSyncedSnapshot(syncedSnapshot);
+          uploadSnapshotFiles(syncedSnapshot).catch((error) => {
             console.warn('Unable to upload synced files', error);
           });
           syncRevisionRef.current = pushed.revision;
@@ -1159,7 +1218,9 @@ export default function App() {
       const deviceId = syncDeviceId || await getSyncDeviceId();
       if (!syncDeviceId) setSyncDeviceId(deviceId);
       const response = await pushSyncSnapshot(syncSnapshotRef.current || syncSnapshot, syncRevisionRef.current, deviceId);
-      uploadSnapshotFiles(syncSnapshotRef.current || syncSnapshot).catch((error) => {
+      const syncedSnapshot = response.data || syncSnapshotRef.current || syncSnapshot;
+      rememberSyncedSnapshot(syncedSnapshot);
+      uploadSnapshotFiles(syncedSnapshot).catch((error) => {
         console.warn('Unable to upload synced files', error);
       });
       syncRevisionRef.current = response.revision;
@@ -1191,6 +1252,7 @@ export default function App() {
       syncRevisionRef.current = response.revision;
       setSyncRevision(response.revision);
       if (response.data) {
+        rememberSyncedSnapshot(response.data);
         applySyncSnapshot(response.data);
       }
       syncDirtyRef.current = false;

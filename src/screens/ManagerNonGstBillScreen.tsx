@@ -2475,6 +2475,7 @@ export function ManagerNonGstBillScreen({
           <SummaryTile label="Other Profit" value={money(pnl.otherProfit)} />
           <SummaryTile label="Expenses" value={money(pnl.totalExpense)} danger={pnl.totalExpense > 0} />
           <SummaryTile label="Net Profit" value={money(pnl.netProfit)} success={pnl.netProfit >= 0} danger={pnl.netProfit < 0} />
+          <SummaryTile label="Cashbook Funds" value={money(pnl.cashbookFunds)} success={pnl.cashbookFunds >= 0} danger={pnl.cashbookFunds < 0} />
           <SummaryTile label="Customer Credit" value={money(pnl.customerCredit)} danger={pnl.customerCredit > 0} />
           <SummaryTile label="Current Stock Value" value={money(pnl.currentStockValue)} />
           <SummaryTile label="Final Balance" value={money(pnl.finalBalance)} success={pnl.finalBalance < 0} danger={pnl.finalBalance >= 0} />
@@ -3155,9 +3156,10 @@ function buildProfitAndLoss(workbook: ManagerWorkbook, totals: ReturnType<typeof
   const otherProfit = workbook.profitSettings.otherProfit;
   const totalExpense = totals.totalExpense;
   const netProfit = billProfit + otherProfit - totalExpense;
+  const cashbookFunds = totals.totalCash;
   const customerCredit = totals.creditBalance;
   const currentStockValue = totals.currentStockValue;
-  const finalBalance = (totalInvestment + netProfit) - (customerCredit + currentStockValue);
+  const finalBalance = (totalInvestment + netProfit) - (currentStockValue + cashbookFunds + customerCredit);
   const status = finalBalance < 0 ? `MORE / SURPLUS by ${money(Math.abs(finalBalance))}` : `SHORT by ${money(finalBalance)}`;
 
   return {
@@ -3169,6 +3171,7 @@ function buildProfitAndLoss(workbook: ManagerWorkbook, totals: ReturnType<typeof
     expenseAdjustment: totals.expenseAdjustment,
     totalExpense,
     netProfit,
+    cashbookFunds,
     customerCredit,
     currentStockValue,
     finalBalance,

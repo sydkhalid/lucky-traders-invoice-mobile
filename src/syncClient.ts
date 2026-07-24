@@ -92,6 +92,10 @@ export async function getSyncDeviceId() {
   return deviceId;
 }
 
+export async function getStoredSyncDeviceId() {
+  return AsyncStorage.getItem(SYNC_DEVICE_ID_STORAGE_KEY);
+}
+
 export async function fetchSyncSnapshot() {
   const response = await fetch(`${getSyncServerUrl()}/sync`, {
     headers: getSyncHeaders(),
