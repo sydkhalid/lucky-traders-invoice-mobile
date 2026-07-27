@@ -1216,7 +1216,10 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <SafeAreaView style={styles.loginSafeArea}>
-          <View style={{ flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#0f2742' }}>
+          <ScrollView
+            style={{ flex: 1, backgroundColor: '#0f2742' }}
+            contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24, gap: 18 }}
+          >
             <View style={styles.loginBrandBlock}>
               <Image source={logo} style={styles.loginLogo} />
               <Text style={styles.loginKicker}>LUCKY TRADERS</Text>
@@ -1245,7 +1248,8 @@ export default function App() {
                 <Text style={styles.loginButtonText}>Retry Server Fetch</Text>
               </Pressable>
             </View>
-          </View>
+            <DatabaseStatusScreen syncStatus={syncStatus} syncRevision={syncRevision} currentCounts={[]} />
+          </ScrollView>
         </SafeAreaView>
       </SafeAreaProvider>
     );

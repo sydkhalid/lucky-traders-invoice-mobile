@@ -14,6 +14,9 @@ const MAX_BODY_BYTES = 80 * 1024 * 1024;
 const SYNC_API_KEY = String(process.env.LUCKY_TRADERS_SYNC_API_KEY || process.env.SYNC_API_KEY || '').trim();
 const REQUESTED_STORAGE = String(process.env.SYNC_STORAGE || '').trim().toLowerCase();
 const DATABASE_URL = String(process.env.DATABASE_URL || '').trim();
+const REQUIRE_POSTGRES =
+  ['1', 'true', 'yes', 'on'].includes(String(process.env.SYNC_REQUIRE_POSTGRES || '').trim().toLowerCase()) ||
+  Boolean(process.env.RENDER || process.env.RENDER_SERVICE_ID || process.env.RENDER_EXTERNAL_URL || process.env.RENDER_GIT_COMMIT);
 let sqliteDb = null;
 let postgresPool = null;
 let storageKind = 'json';
@@ -34,6 +37,14 @@ function ensureDataDir() {
 }
 
 async function initializeStorage() {
+  if (REQUIRE_POSTGRES) {
+    if (REQUESTED_STORAGE && REQUESTED_STORAGE !== 'postgres') {
+      throw new Error('SYNC_REQUIRE_POSTGRES is enabled, so SYNC_STORAGE must be postgres.');
+    }
+    await initializePostgresStorage();
+    return;
+  }
+
   if (REQUESTED_STORAGE === 'postgres' || DATABASE_URL) {
     await initializePostgresStorage();
     return;

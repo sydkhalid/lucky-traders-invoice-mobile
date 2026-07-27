@@ -44,6 +44,7 @@ Use these Render environment variables:
 ```text
 PORT=8095
 SYNC_STORAGE=postgres
+SYNC_REQUIRE_POSTGRES=true
 DATABASE_URL=postgres://user:password@host:5432/database
 SYNC_API_KEY=choose-a-long-private-key
 ```
@@ -87,6 +88,7 @@ Use these Koyeb environment variables:
 ```text
 PORT=8095
 SYNC_STORAGE=postgres
+SYNC_REQUIRE_POSTGRES=true
 DATABASE_URL=postgres://user:password@host:5432/database
 SYNC_API_KEY=choose-a-long-private-key
 ```
