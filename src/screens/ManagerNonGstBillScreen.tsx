@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { logo, signature } from '../assets';
-import { Card, DatePickerField, Field } from '../components/common';
+import { Card, DatePickerField, Field, SegmentedControl } from '../components/common';
 import { formatDate, getPrintableAssets, money, numberFormat, parseDisplayDate } from '../invoiceCore';
 import type { AuthenticatedUser } from '../nosqlUserTable';
 import { styles } from '../styles';
@@ -40,6 +40,7 @@ type ManagerTab =
 type BillMode = 'list' | 'form';
 type SyncStatus = 'checking' | 'online' | 'offline' | 'syncing';
 type SyncAction = 'send' | 'receive' | null;
+type ManagerCollectionMode = 'cash' | 'bank';
 
 type NonGstItem = {
   id: string;
@@ -178,6 +179,10 @@ const managerTabs: { key: ManagerTab; label: string; icon: IconName }[] = [
 ];
 
 const defaultCategories = ['White', 'MS Black', 'Flat/Patta'];
+const managerCollectionModes: { label: string; value: ManagerCollectionMode }[] = [
+  { label: 'Cash', value: 'cash' },
+  { label: 'Bank', value: 'bank' },
+];
 
 const profitPartners = [
   { name: 'Shafi', mainPercent: 42.5, otherPercent: 25 },
@@ -248,6 +253,13 @@ const emptyFinanceExpenseForm = () => ({
   notes: '',
 });
 
+const emptyBillCollectionForm = () => ({
+  date: formatDate(new Date()),
+  amount: '',
+  mode: 'cash' as ManagerCollectionMode,
+  note: '',
+});
+
 export function ManagerNonGstBillScreen({
   user,
   onLogout,
@@ -308,6 +320,8 @@ export function ManagerNonGstBillScreen({
   const [creditForm, setCreditForm] = useState(emptyCreditForm);
   const [editingCreditId, setEditingCreditId] = useState<string | null>(null);
   const [creditPage, setCreditPage] = useState(1);
+  const [collectingBillId, setCollectingBillId] = useState<string | null>(null);
+  const [billCollectionForm, setBillCollectionForm] = useState(emptyBillCollectionForm);
   const [cashForm, setCashForm] = useState(emptyCashForm);
   const [editingCashId, setEditingCashId] = useState<string | null>(null);
   const [cashPage, setCashPage] = useState(1);
@@ -901,6 +915,79 @@ export function ManagerNonGstBillScreen({
         },
       },
     ]);
+  }
+
+  function startBillCollection(record: NonGstBillRecord) {
+    const balance = getBillBalance(record);
+    if (balance <= 0.009) {
+      Alert.alert('Already paid', `${record.billNo} has no pending balance.`);
+      return;
+    }
+
+    setCollectingBillId(record.id);
+    setBillCollectionForm({
+      ...emptyBillCollectionForm(),
+      amount: formatFormNumber(balance),
+    });
+    setActiveTab('credit');
+  }
+
+  function cancelBillCollection() {
+    setCollectingBillId(null);
+    setBillCollectionForm(emptyBillCollectionForm());
+  }
+
+  function saveBillCollection() {
+    const bill = billRecords.find((record) => record.id === collectingBillId);
+    if (!bill) {
+      Alert.alert('Bill required', 'Select a pending bill before saving collection.');
+      return;
+    }
+
+    const amount = parseAmount(billCollectionForm.amount);
+    const balance = getBillBalance(bill);
+    if (amount <= 0) {
+      Alert.alert('Amount required', 'Enter received amount.');
+      return;
+    }
+    if (amount > balance + 0.009) {
+      Alert.alert('Amount too high', `This bill balance is ${money(balance)}. Save only the received balance amount.`);
+      return;
+    }
+
+    const nextPaidAmount = (bill.paidAmount || 0) + amount;
+    const description = `Receipt ${bill.billNo} - ${bill.customer || 'Walk-in customer'}${billCollectionForm.note.trim() ? ` (${billCollectionForm.note.trim()})` : ''}`;
+
+    updateWorkbook((current) => {
+      const hasStoredBill = current.bills.some((record) => record.id === bill.id || record.billNo === bill.billNo);
+      const updatedBills = current.bills.map((record) =>
+        record.id === bill.id || record.billNo === bill.billNo
+          ? { ...record, paidAmount: Math.min(record.total, nextPaidAmount) }
+          : record,
+      );
+
+      return {
+        ...current,
+        bills: hasStoredBill
+          ? updatedBills
+          : [{ ...bill, paidAmount: Math.min(bill.total, nextPaidAmount) }, ...updatedBills],
+        cashbook: [
+          {
+            id: makeId('cash'),
+            date: billCollectionForm.date,
+            description,
+            cashCredit: billCollectionForm.mode === 'cash' ? amount : 0,
+            cashDebit: 0,
+            bankCredit: billCollectionForm.mode === 'bank' ? amount : 0,
+            bankDebit: 0,
+          },
+          ...current.cashbook,
+        ],
+      };
+    });
+
+    cancelBillCollection();
+    Alert.alert('Collection saved', `${money(amount)} received for ${bill.billNo}.`);
   }
 
   function saveCashEntry() {
@@ -1575,6 +1662,12 @@ export function ManagerNonGstBillScreen({
                     {productLine || 'No item details'}
                   </Text>
                   <View style={styles.invoiceActionRow}>
+                    {balance > 0 ? (
+                      <Pressable style={styles.shareButton} onPress={() => startBillCollection(record)}>
+                        <MaterialCommunityIcons name="cash-plus" size={17} color="#163a5f" />
+                        <Text style={styles.shareButtonText}>Receive</Text>
+                      </Pressable>
+                    ) : null}
                     <Pressable style={styles.invoicePreviewButton} onPress={() => editBillRecord(record)}>
                       <MaterialCommunityIcons name="pencil-outline" size={17} color="#163a5f" />
                       <Text style={styles.invoicePreviewButtonText}>Edit</Text>
@@ -1975,9 +2068,58 @@ export function ManagerNonGstBillScreen({
 
   function renderCreditTab() {
     const editingCredit = Boolean(editingCreditId);
+    const collectingBill = billRecords.find((record) => record.id === collectingBillId) || null;
+    const collectingBalance = collectingBill ? getBillBalance(collectingBill) : 0;
 
     return (
       <>
+        {collectingBill ? (
+          <Card
+            title="Receive bill payment"
+            icon="cash-plus"
+            action={
+              <Pressable style={styles.cancelEditButton} onPress={cancelBillCollection}>
+                <MaterialCommunityIcons name="close" size={15} color="#b42318" />
+                <Text style={styles.cancelEditButtonText}>Cancel</Text>
+              </Pressable>
+            }
+          >
+            <View style={styles.editingNotice}>
+              <MaterialCommunityIcons name="file-document-outline" size={18} color="#163a5f" />
+              <Text style={styles.editingNoticeText}>
+                {collectingBill.billNo} | {collectingBill.customer || 'Walk-in customer'} | Balance {money(collectingBalance)}
+              </Text>
+            </View>
+            <DatePickerField
+              label="Collection Date"
+              value={billCollectionForm.date}
+              onChange={(value) => setBillCollectionForm((current) => ({ ...current, date: value }))}
+            />
+            <Field
+              label="Received Amount"
+              value={billCollectionForm.amount}
+              onChangeText={(value) => setBillCollectionForm((current) => ({ ...current, amount: value }))}
+              keyboardType="decimal-pad"
+            />
+            <SegmentedControl
+              label="Collection Mode"
+              value={billCollectionForm.mode}
+              options={managerCollectionModes}
+              onChange={(value) => setBillCollectionForm((current) => ({ ...current, mode: value as ManagerCollectionMode }))}
+            />
+            <Field
+              label="Note"
+              value={billCollectionForm.note}
+              onChangeText={(value) => setBillCollectionForm((current) => ({ ...current, note: value }))}
+              multiline
+            />
+            <Pressable style={styles.primaryNavButton} onPress={saveBillCollection}>
+              <MaterialCommunityIcons name="content-save-outline" size={18} color="#ffffff" />
+              <Text style={styles.primaryNavText}>Save Collection</Text>
+            </Pressable>
+          </Card>
+        ) : null}
+
         <Card
           title={editingCredit ? 'Edit customer credit' : 'Customer credit'}
           icon="account-credit-card-outline"
@@ -2026,13 +2168,26 @@ export function ManagerNonGstBillScreen({
             <View style={styles.reportList}>
               <Text style={styles.listToolbarTitle}>Bill pending balances</Text>
               {billRecords.filter((bill) => getBillBalance(bill) > 0).map((bill) => (
-                <LedgerRow
-                  key={bill.id}
-                  title={`${bill.customer || 'Walk-in customer'} - ${bill.billNo}`}
-                  meta={`${bill.date} | Total ${money(bill.total)} | Paid ${money(bill.paidAmount || 0)}`}
-                  amount={getBillBalance(bill)}
-                  danger
-                />
+                <View style={styles.savedInvoiceCard} key={bill.id}>
+                  <View style={styles.savedInvoiceHeader}>
+                    <View style={styles.quickActionText}>
+                      <Text style={styles.savedInvoiceNo}>{bill.customer || 'Walk-in customer'} - {bill.billNo}</Text>
+                      <Text style={styles.savedInvoiceMeta}>{bill.date} | Total {money(bill.total)} | Paid {money(bill.paidAmount || 0)}</Text>
+                    </View>
+                    <View style={styles.savedInvoiceTotalBadge}>
+                      <Text style={styles.savedInvoiceStatus}>BALANCE</Text>
+                      <Text style={[styles.savedInvoiceTotal, styles.reportRowAmountRed]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+                        {money(getBillBalance(bill))}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.invoiceActionRow}>
+                    <Pressable style={styles.shareButton} onPress={() => startBillCollection(bill)}>
+                      <MaterialCommunityIcons name="cash-plus" size={17} color="#163a5f" />
+                      <Text style={styles.shareButtonText}>Receive</Text>
+                    </Pressable>
+                  </View>
+                </View>
               ))}
             </View>
           ) : null}
