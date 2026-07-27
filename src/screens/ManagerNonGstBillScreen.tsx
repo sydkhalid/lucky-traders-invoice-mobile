@@ -179,6 +179,7 @@ const managerTabs: { key: ManagerTab; label: string; icon: IconName }[] = [
 ];
 
 const defaultCategories = ['White', 'MS Black', 'Flat/Patta'];
+const MANAGER_PAID_SETTLEMENT_TOLERANCE = 200;
 const managerCollectionModes: { label: string; value: ManagerCollectionMode }[] = [
   { label: 'Cash', value: 'cash' },
   { label: 'Bank', value: 'bank' },
@@ -337,8 +338,9 @@ export function ManagerNonGstBillScreen({
   const [otherProfit, setOtherProfit] = useState(String(createDefaultWorkbook().profitSettings.otherProfit));
   const [profitExpense, setProfitExpense] = useState(String(createDefaultWorkbook().profitSettings.totalExpense));
   const usesSyncedManagerData = Boolean(managerWorkbook && onWorkbookChange && onSequenceChange);
-  const sequence = managerSequence ?? localSequence;
   const workbook = managerWorkbook ?? localWorkbook;
+  const billRecords = useMemo(() => buildManagerBillRecords(workbook), [workbook]);
+  const sequence = getNextManagerBillSequence(billRecords, managerSequence ?? localSequence);
   const workbookReady = usesSyncedManagerData ? managerWorkbookReady : localWorkbookReady;
   const availableManagerTabs = useMemo(
     () => {
@@ -379,8 +381,9 @@ export function ManagerNonGstBillScreen({
       AsyncStorage.getItem(MANAGER_WORKBOOK_KEY),
     ])
       .then(([storedSequence, storedWorkbook]) => {
-        const nextSequence = Math.max(1, Number(storedSequence) || 1);
+        const storedNextSequence = Math.max(1, Number(storedSequence) || 1);
         const nextWorkbook = normalizeWorkbook(storedWorkbook ? JSON.parse(storedWorkbook) : null);
+        const nextSequence = getNextManagerBillSequence(buildManagerBillRecords(nextWorkbook), storedNextSequence);
         if (cancelled) return;
         setLocalSequence(nextSequence);
         setBillNo(formatNonGstBillNo(nextSequence));
@@ -434,7 +437,6 @@ export function ManagerNonGstBillScreen({
     const start = (customerPage - 1) * MANAGER_CUSTOMERS_PER_PAGE;
     return savedCustomers.slice(start, start + MANAGER_CUSTOMERS_PER_PAGE);
   }, [customerPage, savedCustomers]);
-  const billRecords = useMemo(() => buildManagerBillRecords(workbook), [workbook]);
   const creditRecords = useMemo(() => sortCreditEntries(workbook.credits), [workbook.credits]);
   const creditPages = Math.max(1, Math.ceil(creditRecords.length / MANAGER_CREDITS_PER_PAGE));
   const visibleCredits = useMemo(() => {
@@ -477,7 +479,7 @@ export function ManagerNonGstBillScreen({
     };
   }, [items, loadingCharge, transportCharge]);
   const paidPreview = Math.max(0, parseAmount(paidAmount));
-  const balancePreview = Math.max(0, totals.grandTotal - paidPreview);
+  const balancePreview = getSettledBalance(totals.grandTotal, paidPreview);
   const workbookTotals = useMemo(() => buildWorkbookTotals(workbook, summaries), [summaries, workbook]);
   const pnl = useMemo(() => buildProfitAndLoss(workbook, workbookTotals), [workbook, workbookTotals]);
 
@@ -575,7 +577,7 @@ export function ManagerNonGstBillScreen({
     const billTotal = Math.round(
       billItems.reduce((sum, item) => sum + item.qty * item.rate, 0) + parseAmount(transportCharge) + parseAmount(loadingCharge),
     );
-    const billPaidAmount = Math.min(billTotal, Math.max(0, parseAmount(paidAmount)));
+    const billPaidAmount = Math.max(0, parseAmount(paidAmount));
 
     updateWorkbook((current) => {
       const originalBillNo = editingBillOriginalNo || billNo;
@@ -803,8 +805,8 @@ export function ManagerNonGstBillScreen({
       Alert.alert('Item required', 'Enter at least one item with quantity and rate.');
       return false;
     }
-    if (parseAmount(paidAmount) > totals.grandTotal) {
-      Alert.alert('Paid amount too high', `This bill total is ${money(totals.grandTotal)}. Paid amount cannot be more than bill total.`);
+    if (parseAmount(paidAmount) > totals.grandTotal + MANAGER_PAID_SETTLEMENT_TOLERANCE) {
+      Alert.alert('Paid amount too high', `This bill total is ${money(totals.grandTotal)}. Paid amount can be over by only ${money(MANAGER_PAID_SETTLEMENT_TOLERANCE)}.`);
       return false;
     }
     if (parseAmount(paidAmount) < 0) {
@@ -950,8 +952,8 @@ export function ManagerNonGstBillScreen({
       Alert.alert('Amount required', 'Enter received amount.');
       return;
     }
-    if (amount > balance + 0.009) {
-      Alert.alert('Amount too high', `This bill balance is ${money(balance)}. Save only the received balance amount.`);
+    if (amount > balance + MANAGER_PAID_SETTLEMENT_TOLERANCE) {
+      Alert.alert('Amount too high', `This bill balance is ${money(balance)}. Extra received amount can be only ${money(MANAGER_PAID_SETTLEMENT_TOLERANCE)}.`);
       return;
     }
 
@@ -962,7 +964,7 @@ export function ManagerNonGstBillScreen({
       const hasStoredBill = current.bills.some((record) => record.id === bill.id || record.billNo === bill.billNo);
       const updatedBills = current.bills.map((record) =>
         record.id === bill.id || record.billNo === bill.billNo
-          ? { ...record, paidAmount: Math.min(record.total, nextPaidAmount) }
+          ? { ...record, paidAmount: nextPaidAmount }
           : record,
       );
 
@@ -970,7 +972,7 @@ export function ManagerNonGstBillScreen({
         ...current,
         bills: hasStoredBill
           ? updatedBills
-          : [{ ...bill, paidAmount: Math.min(bill.total, nextPaidAmount) }, ...updatedBills],
+          : [{ ...bill, paidAmount: nextPaidAmount }, ...updatedBills],
         cashbook: [
           {
             id: makeId('cash'),
@@ -3169,7 +3171,7 @@ function normalizeManagerBills(records: unknown[], salesRows: SaleEntry[]) {
         loadingCharge,
         note: typeof record.note === 'string' ? record.note.trim() : '',
         total,
-        paidAmount: Math.min(total, Math.max(0, Number(record.paidAmount) || 0)),
+        paidAmount: Math.max(0, Number(record.paidAmount) || 0),
       };
     })
     .filter((record): record is NonGstBillRecord => Boolean(record));
@@ -3214,7 +3216,13 @@ function buildManagerBillsFromSales(salesRows: SaleEntry[]) {
 }
 
 function getBillBalance(record: NonGstBillRecord) {
-  return Math.max(0, record.total - (record.paidAmount || 0));
+  return getSettledBalance(record.total, record.paidAmount || 0);
+}
+
+function getSettledBalance(total: number, paidAmount: number) {
+  const balance = total - paidAmount;
+  if (balance <= MANAGER_PAID_SETTLEMENT_TOLERANCE) return 0;
+  return balance;
 }
 
 function sortManagerBills(records: NonGstBillRecord[]) {
@@ -3365,10 +3373,13 @@ function buildWorkbookTotals(workbook: ManagerWorkbook, summaries: ReturnType<ty
   const profit = summaries.reduce((sum, item) => sum + item.profit, 0);
   const billCreditAmount = workbook.bills.reduce((sum, entry) => sum + entry.total, 0);
   const billCreditPaid = workbook.bills.reduce((sum, entry) => sum + (entry.paidAmount || 0), 0);
+  const billCreditBalance = workbook.bills.reduce((sum, entry) => sum + getBillBalance(entry), 0);
   const manualCreditAmount = workbook.credits.reduce((sum, entry) => sum + entry.creditAmount, 0);
   const manualCreditPaid = workbook.credits.reduce((sum, entry) => sum + entry.paidAmount, 0);
+  const manualCreditBalance = workbook.credits.reduce((sum, entry) => sum + Math.max(0, entry.creditAmount - entry.paidAmount), 0);
   const creditAmount = billCreditAmount + manualCreditAmount;
   const creditPaid = billCreditPaid + manualCreditPaid;
+  const creditBalance = billCreditBalance + manualCreditBalance;
   const cashBalance = workbook.cashbook.reduce((sum, entry) => sum + entry.cashCredit - entry.cashDebit, 0);
   const bankBalance = workbook.cashbook.reduce((sum, entry) => sum + entry.bankCredit - entry.bankDebit, 0);
   const totalInvestment = workbook.investments
@@ -3389,13 +3400,13 @@ function buildWorkbookTotals(workbook: ManagerWorkbook, summaries: ReturnType<ty
     profit,
     billCreditAmount,
     billCreditPaid,
-    billCreditBalance: billCreditAmount - billCreditPaid,
+    billCreditBalance,
     manualCreditAmount,
     manualCreditPaid,
-    manualCreditBalance: manualCreditAmount - manualCreditPaid,
+    manualCreditBalance,
     creditAmount,
     creditPaid,
-    creditBalance: creditAmount - creditPaid,
+    creditBalance,
     cashBalance,
     bankBalance,
     totalCash: cashBalance + bankBalance,
@@ -3440,6 +3451,12 @@ function buildProfitAndLoss(workbook: ManagerWorkbook, totals: ReturnType<typeof
 
 function formatNonGstBillNo(sequence: number) {
   return `RCPT${String(Math.max(1, Math.trunc(sequence))).padStart(3, '0')}`;
+}
+
+function getNextManagerBillSequence(records: NonGstBillRecord[], fallbackSequence: number) {
+  if (records.length === 0) return 1;
+  const highestBillSequence = records.reduce((highest, record) => Math.max(highest, extractBillSequence(record.billNo)), 0);
+  return Math.max(1, Math.trunc(fallbackSequence) || 1, highestBillSequence + 1);
 }
 
 function normalizeReceiptNo(value: string) {
