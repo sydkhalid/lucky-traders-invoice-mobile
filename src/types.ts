@@ -99,4 +99,4 @@ export type ProfileForm = {
 };
 
 export type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
-export type AppMenuKey = 'dashboard' | 'clients' | 'suppliers' | 'purchases' | 'inventory' | 'supplierPayments' | 'invoice' | 'invoices' | 'payments' | 'reports' | 'gstFiling' | 'documents' | 'expenses' | 'employees' | 'users' | 'deviceSharing' | 'account';
+export type AppMenuKey = 'dashboard' | 'clients' | 'suppliers' | 'purchases' | 'inventory' | 'supplierPayments' | 'invoice' | 'invoices' | 'payments' | 'reports' | 'gstFiling' | 'documents' | 'expenses' | 'employees' | 'users' | 'deviceSharing' | 'databaseStatus' | 'account';

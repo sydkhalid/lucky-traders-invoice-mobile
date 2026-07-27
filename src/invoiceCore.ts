@@ -68,6 +68,7 @@ export const appMenus: { key: AppMenuKey; label: string; icon: IconName }[] = [
   { key: 'employees', label: 'Employees', icon: 'account-tie-outline' },
   { key: 'users', label: 'Users', icon: 'account-key-outline' },
   { key: 'deviceSharing', label: 'Device Sharing', icon: 'access-point-network' },
+  { key: 'databaseStatus', label: 'Database Status', icon: 'database-search-outline' },
   { key: 'account', label: 'Account', icon: 'account-circle-outline' },
 ];
 

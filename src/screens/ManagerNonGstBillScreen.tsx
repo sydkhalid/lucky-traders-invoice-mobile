@@ -12,6 +12,7 @@ import { formatDate, getPrintableAssets, money, numberFormat, parseDisplayDate }
 import type { AuthenticatedUser } from '../nosqlUserTable';
 import { styles } from '../styles';
 import type { IconName } from '../types';
+import { DatabaseStatusScreen } from './DatabaseStatusScreen';
 import { DeviceSharingScreen } from './DeviceSharingScreen';
 
 export const MANAGER_NON_GST_SEQUENCE_KEY = 'lucky-traders.managerNonGstSequence.v1';
@@ -34,7 +35,8 @@ type ManagerTab =
   | 'financeExpense'
   | 'profitLoss'
   | 'profitSharing'
-  | 'deviceSharing';
+  | 'deviceSharing'
+  | 'databaseStatus';
 type BillMode = 'list' | 'form';
 type SyncStatus = 'checking' | 'online' | 'offline' | 'syncing';
 type SyncAction = 'send' | 'receive' | null;
@@ -325,7 +327,11 @@ export function ManagerNonGstBillScreen({
   const availableManagerTabs = useMemo(
     () => {
       if (!onSendDeviceShare || !onReceiveDeviceShare || !syncServerUrl) return managerTabs;
-      return [...managerTabs, { key: 'deviceSharing' as const, label: 'Device Sharing', icon: 'access-point-network' as IconName }];
+      return [
+        ...managerTabs,
+        { key: 'deviceSharing' as const, label: 'Device Sharing', icon: 'access-point-network' as IconName },
+        { key: 'databaseStatus' as const, label: 'Database Status', icon: 'database-search-outline' as IconName },
+      ];
     },
     [onReceiveDeviceShare, onSendDeviceShare, syncServerUrl],
   );
@@ -2539,7 +2545,13 @@ export function ManagerNonGstBillScreen({
               <View style={styles.quickActionText}>
                 <Text style={styles.pageKicker}>MANAGER WORKBOOK</Text>
                 <Text style={styles.pageTitle}>{availableManagerTabs.find((tab) => tab.key === activeTab)?.label}</Text>
-                <Text style={styles.pageSubtitle}>{activeTab === 'deviceSharing' ? 'Nearby transfer for manager data' : 'Excel workflow inside manager login'}</Text>
+                <Text style={styles.pageSubtitle}>
+                  {activeTab === 'deviceSharing'
+                    ? 'Nearby transfer for manager data'
+                    : activeTab === 'databaseStatus'
+                      ? 'Check server database before entering manager data'
+                      : 'Excel workflow inside manager login'}
+                </Text>
               </View>
             </View>
 
@@ -2566,6 +2578,22 @@ export function ManagerNonGstBillScreen({
                 onSend={onSendDeviceShare}
                 onReceive={onReceiveDeviceShare}
                 counts={[
+                  { label: 'Customers', value: workbook.customers.length },
+                  { label: 'Bills', value: workbook.bills.length },
+                  { label: 'Stock', value: workbook.stockEntries.length },
+                  { label: 'Sales', value: workbook.sales.length },
+                  { label: 'Credits', value: workbook.credits.length },
+                  { label: 'Cashbook', value: workbook.cashbook.length },
+                  { label: 'Investments', value: workbook.investments.length },
+                  { label: 'Expenses', value: workbook.expenses.length },
+                ]}
+              />
+            ) : null}
+            {activeTab === 'databaseStatus' ? (
+              <DatabaseStatusScreen
+                syncStatus={syncStatus}
+                syncRevision={syncRevision}
+                currentCounts={[
                   { label: 'Customers', value: workbook.customers.length },
                   { label: 'Bills', value: workbook.bills.length },
                   { label: 'Stock', value: workbook.stockEntries.length },

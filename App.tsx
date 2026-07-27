@@ -62,6 +62,7 @@ import {
 import type { AuthenticatedUser, NoSqlUserTable, UserDocument } from './src/nosqlUserTable';
 import { AccountScreen } from './src/screens/AccountScreen';
 import { ClientsScreen } from './src/screens/ClientsScreen';
+import { DatabaseStatusScreen } from './src/screens/DatabaseStatusScreen';
 import { DashboardScreen } from './src/screens/DashboardScreen';
 import { DeviceSharingScreen } from './src/screens/DeviceSharingScreen';
 import { DocumentsScreen } from './src/screens/DocumentsScreen';
@@ -2640,6 +2641,22 @@ export default function App() {
               onSend={sendDeviceShareData}
               onReceive={receiveDeviceShareData}
               counts={[
+                { label: 'Clients', value: clients.length },
+                { label: 'Suppliers', value: suppliers.length },
+                { label: 'Products', value: products.length },
+                { label: 'Purchases', value: purchases.length },
+                { label: 'Invoices', value: savedInvoices.length },
+                { label: 'Payments', value: payments.length },
+                { label: 'Expenses', value: expenses.length },
+                { label: 'Employees', value: employees.length },
+              ]}
+            />
+          )}
+          {activeMenu === 'databaseStatus' && (
+            <DatabaseStatusScreen
+              syncStatus={syncStatus}
+              syncRevision={syncRevision}
+              currentCounts={[
                 { label: 'Clients', value: clients.length },
                 { label: 'Suppliers', value: suppliers.length },
                 { label: 'Products', value: products.length },

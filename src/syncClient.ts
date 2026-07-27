@@ -41,6 +41,18 @@ export type SyncServerResponse = {
   data: SyncDatabaseSnapshot | null;
 };
 
+export type SyncDatabaseStatus = {
+  ok: boolean;
+  storage: 'postgres' | 'sqlite' | 'json' | string;
+  database: string;
+  revision: number;
+  updatedAt: string | null;
+  updatedByDevice?: string;
+  hasData: boolean;
+  counts: Record<string, number> | null;
+  syncedFileCount: number;
+};
+
 export function getSyncServerUrl() {
   const extra = (Constants.expoConfig?.extra || {}) as { syncServerUrl?: string; syncApiKey?: string };
   if (extra.syncServerUrl?.trim()) {
@@ -107,6 +119,21 @@ export async function fetchSyncSnapshot() {
   }
 
   return (await response.json()) as SyncServerResponse;
+}
+
+export async function fetchDatabaseStatus() {
+  const response = await fetchWithTimeout(`${getSyncServerUrl()}/database`, {
+    headers: getSyncHeaders(),
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('Database status endpoint is not deployed on this server yet.');
+    }
+    throw new Error(`Database status returned ${response.status}.`);
+  }
+
+  return (await response.json()) as SyncDatabaseStatus;
 }
 
 export async function pushSyncSnapshot(snapshot: SyncDatabaseSnapshot, baseRevision: number, deviceId: string) {

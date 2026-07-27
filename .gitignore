@@ -18,3 +18,6 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 android/.kotlin/
+/desktop-release-server-only
+/desktop-release-database-status
+/desktop-release-database-status-final
