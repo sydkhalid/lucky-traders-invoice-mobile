@@ -29,10 +29,14 @@ export function DatabaseStatusScreen({
   syncStatus,
   syncRevision,
   currentCounts,
+  creatingServerDatabase = false,
+  onCreateServerDatabase,
 }: {
   syncStatus: SyncStatus;
   syncRevision: number;
   currentCounts: { label: string; value: number }[];
+  creatingServerDatabase?: boolean;
+  onCreateServerDatabase?: () => Promise<void> | void;
 }) {
   const [status, setStatus] = useState<SyncDatabaseStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -119,6 +123,16 @@ export function DatabaseStatusScreen({
           ) : null}
           {!hasServerData ? (
             <Text style={styles.loginError}>Server database has no business data. New records must be saved after this page shows the correct server.</Text>
+          ) : null}
+          {usesPostgres && !hasServerData && onCreateServerDatabase ? (
+            <Pressable
+              style={[styles.loginButton, styles.loginSuccessButton, creatingServerDatabase && styles.navButtonDisabled]}
+              onPress={onCreateServerDatabase}
+              disabled={creatingServerDatabase}
+            >
+              <MaterialCommunityIcons name="database-plus-outline" size={18} color="#ffffff" />
+              <Text style={styles.loginButtonText}>{creatingServerDatabase ? 'Creating Server Database...' : 'Create New Server Database'}</Text>
+            </Pressable>
           ) : null}
         </Card>
       ) : null}

@@ -11,6 +11,8 @@ ENV SYNC_REQUIRE_POSTGRES=true
 COPY server-package.json ./package.json
 RUN npm install --omit=dev --package-lock=false
 COPY sync-server.js ./
+COPY sync-data/sync-db.json ./sync-data/sync-db.json
+COPY sync-data/files ./sync-data/files
 
 EXPOSE 8095
 

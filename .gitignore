@@ -5,7 +5,11 @@ desktop-dist/
 desktop-build/
 desktop-release/
 web-build/
-sync-data/
+sync-data/*
+!sync-data/
+!sync-data/sync-db.json
+!sync-data/files/
+!sync-data/files/**
 .env
 .env.*
 *.log
@@ -21,3 +25,4 @@ android/.kotlin/
 /desktop-release-server-only
 /desktop-release-database-status
 /desktop-release-database-status-final
+/desktop-release-create-server-db

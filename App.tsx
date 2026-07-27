@@ -436,6 +436,7 @@ export default function App() {
   const [syncStatus, setSyncStatus] = useState<'checking' | 'online' | 'offline' | 'syncing'>('checking');
   const [syncDeviceId, setSyncDeviceId] = useState('');
   const [manualSyncAction, setManualSyncAction] = useState<'send' | 'receive' | null>(null);
+  const [creatingServerDatabase, setCreatingServerDatabase] = useState(false);
   const [serverDataReady, setServerDataReady] = useState(false);
   const [serverDataError, setServerDataError] = useState('');
   const [serverDataRetry, setServerDataRetry] = useState(0);
@@ -1212,6 +1213,35 @@ export default function App() {
     return response;
   }
 
+  async function createNewServerDatabase() {
+    if (!localDatabasesHydrated || syncPushingRef.current || creatingServerDatabase) return;
+
+    try {
+      setCreatingServerDatabase(true);
+      syncPushingRef.current = true;
+      setManualSyncAction('send');
+      setSyncStatus('syncing');
+      setServerDataError('');
+      const deviceId = syncDeviceId || await getSyncDeviceId();
+      if (!syncDeviceId) setSyncDeviceId(deviceId);
+      const response = await publishLocalDataToServer(deviceId, syncRevisionRef.current);
+      await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
+      setSyncStatus('online');
+      setServerDataReady(true);
+      setSyncReady(true);
+      Alert.alert('Server database created', `PostgreSQL server database is ready at revision ${response.revision}.`);
+    } catch (error) {
+      syncDirtyRef.current = false;
+      setSyncStatus('offline');
+      setServerDataError(error instanceof Error ? error.message : 'Unable to create server database.');
+      Alert.alert('Create failed', error instanceof Error ? error.message : 'Unable to create server database.');
+    } finally {
+      syncPushingRef.current = false;
+      setCreatingServerDatabase(false);
+      setManualSyncAction(null);
+    }
+  }
+
   if (!serverDataReady) {
     return (
       <SafeAreaProvider>
@@ -1248,7 +1278,13 @@ export default function App() {
                 <Text style={styles.loginButtonText}>Retry Server Fetch</Text>
               </Pressable>
             </View>
-            <DatabaseStatusScreen syncStatus={syncStatus} syncRevision={syncRevision} currentCounts={[]} />
+            <DatabaseStatusScreen
+              syncStatus={syncStatus}
+              syncRevision={syncRevision}
+              currentCounts={[]}
+              creatingServerDatabase={creatingServerDatabase}
+              onCreateServerDatabase={createNewServerDatabase}
+            />
           </ScrollView>
         </SafeAreaView>
       </SafeAreaProvider>

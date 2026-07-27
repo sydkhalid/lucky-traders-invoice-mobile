@@ -1,0 +1,2365 @@
+{
+  "revision": 137,
+  "updatedAt": "2026-07-23T15:07:32.126Z",
+  "updatedByDevice": "device-1784021669379-d38ce44eb47df",
+  "data": {
+    "userTable": {
+      "admin_users": {
+        "admin-001": {
+          "id": "admin-001",
+          "collection": "admin_users",
+          "username": "sydkhalid007",
+          "email": "sydkhalid7@gmail.com",
+          "phone": "+917904721979",
+          "name": "Syed Khalid Ahamed",
+          "role": "admin",
+          "status": "active",
+          "password": "Sydkhalid7@321",
+          "createdAt": "14-07-2026",
+          "createdBy": "System Seed"
+        }
+      },
+      "manager_users": {
+        "manager-001": {
+          "id": "manager-001",
+          "collection": "manager_users",
+          "username": "manager",
+          "email": "manager@luckytraders.local",
+          "phone": "",
+          "name": "Manager",
+          "role": "manager",
+          "status": "active",
+          "password": "manager123",
+          "createdAt": "14-07-2026",
+          "createdBy": "System Seed"
+        }
+      }
+    },
+    "clients": [
+      {
+        "id": "client-invoice-afza-matetial-handling-storage-system-1784018305284-9",
+        "name": "AFZA MATETIAL HANDLING & STORAGE SYSTEM",
+        "address": "#GANGALERI",
+        "gstin": "URP",
+        "phone": "+91 9080737627",
+        "createdAt": "14-07-2026",
+        "createdBy": "Invoice Import",
+        "createdByRole": "system"
+      },
+      {
+        "id": "client-hindustan-steels-cement",
+        "name": "HINDUSTAN STEELS & CEMENT",
+        "address": "#No.5/6A2, DoorNo. 1094, Jambary, Kanji, Chengam, Tiruvannamalai, Tamilnadu - 606702",
+        "gstin": "33EYDPA4709P1ZB",
+        "phone": "+91 93454 66572",
+        "createdAt": "14-07-2026",
+        "createdBy": "Seed User",
+        "createdByRole": "system"
+      },
+      {
+        "id": "client-new-hindustan-steels-hardwares",
+        "name": "NEW HINDUSTAN STEELS AND HARDWARES",
+        "address": "#2/415, Road Street, Near Primary Health Centre, Veeralur, Kalasapakkam, Tiruvannamalai, Tamil Nadu - 606908",
+        "gstin": "33CGGPM7511L1Z9",
+        "phone": "+91 93456 06657",
+        "createdAt": "14-07-2026",
+        "createdBy": "Seed User",
+        "createdByRole": "system"
+      },
+      {
+        "id": "client-kumutha-plastic-industries",
+        "name": "KUMUTHA PLASTIC INDUSTRIES",
+        "address": "3/605D, RAJIVE GANDHI NAGAR, PALAYAMPUDUR(P.O), NALLAMPALLI(T.K), DHARMAPURI(D.T) TAMIL NADU, 636807",
+        "gstin": "33COGPK3609P1ZN",
+        "phone": "+91 9043411825",
+        "createdAt": "14-07-2026",
+        "createdBy": "Seed User",
+        "createdByRole": "system"
+      },
+      {
+        "id": "client-three-star-steels-bottles",
+        "name": "Three Star Steels And Bottles",
+        "address": "#Godown No- 19/30B, Manjalungal, Ongallur, Kalladipatta, Pattambi, Palakkad",
+        "gstin": "32AAOFT8015G1Z5",
+        "phone": "+91 9846786009",
+        "createdAt": "14-07-2026",
+        "createdBy": "Seed User",
+        "createdByRole": "system"
+      },
+      {
+        "id": "client-raghul-m",
+        "name": "RAGHUL M",
+        "address": "#5/4A1, Kaikukaran Kottai, Karimangalam, Salem Main Road, Karimangalam, Dharmapuri, Tamil Nadu, 635111",
+        "gstin": "URP",
+        "phone": "+91 8754417143",
+        "createdAt": "14-07-2026",
+        "createdBy": "Seed User",
+        "createdByRole": "system"
+      },
+      {
+        "id": "client-aaradhana-traders",
+        "name": "AARADHANA TRADERS",
+        "address": "#1/239C Santhur X Road, Pochampalli, Kattagaram, Krishnagiri, Tamil Nadu-635206",
+        "gstin": "33CMJPV5578B1ZQ",
+        "phone": "+91 9715141819",
+        "createdAt": "14-07-2026",
+        "createdBy": "Seed User",
+        "createdByRole": "system"
+      },
+      {
+        "id": "client-prince-mathiyalagan-tn29bu9878",
+        "name": "Prince Mathiyalagan -TN29BU9878",
+        "address": "Kambainallur main road, kasappatti (post) morappur, dharmapuri.-635305",
+        "gstin": "URP",
+        "phone": "+919715127410",
+        "createdAt": "14-07-2026",
+        "createdBy": "Seed User",
+        "createdByRole": "system"
+      },
+      {
+        "id": "client-muniyappan-sevathan-tn29bp7081",
+        "name": "Muniyappan Sevathan - TN29BP7081",
+        "address": "#4/64, MOTTAIYAN KOTTAI, Dandukaranahalli, Dharmapuri, 636808 Dandukaranahalli, Tamil Nadu, 635808",
+        "gstin": "URP",
+        "phone": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Seed User",
+        "createdByRole": "system"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "supplier-1784004262578",
+        "name": "FAB PIPES AND TUBES",
+        "address": "S.F.No 551/2A, FATIMA THOTTAM, UPPUPARA POST, L&T BYEPASS ROAD, MADUKKARAI, COIMBATORE, TAMILNADU - 641105",
+        "gstin": "33HMIPS8654D1ZM",
+        "phone": "9585880201",
+        "email": "fabpipesandtubes@gmail.com",
+        "sourceFileName": "Invoice Fab Pipes And Tubes_26-27_004 (LUCKY TRADERS).pdf",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "supplier-1784004250599",
+        "name": "Inframat Alloys Pvt. Ltd.",
+        "address": "Sy No. 60-1A1, Shoolapalli Village, Thiagarasanapalli, Panchayat, Shoolagiri Post and Taluk, Krishnagiri District, Tamil Nadu, - 635117.",
+        "gstin": "33AACCI9652H1ZH",
+        "phone": "+917022001155",
+        "email": "accounts@inframat.in",
+        "sourceFileName": "golden steel0604.pdf",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      }
+    ],
+    "products": [
+      {
+        "key": "steel-tube-galvanize",
+        "label": "SteelTube",
+        "hsn": "73061911",
+        "price": "74.00",
+        "createdAt": "14-07-2026",
+        "createdBy": "System",
+        "createdByRole": "system"
+      },
+      {
+        "key": "ms-angle-25x5a",
+        "label": "MS ANGLE/ISMB/ISMC-721650 25X5A",
+        "hsn": "72165000",
+        "price": "53.65",
+        "createdAt": "14-07-2026",
+        "createdBy": "System",
+        "createdByRole": "system"
+      },
+      {
+        "key": "ms-angle-35x5a",
+        "label": "MS ANGLE/ISMB/ISMC-721650 35X5A",
+        "hsn": "72165000",
+        "price": "52.55",
+        "createdAt": "14-07-2026",
+        "createdBy": "System",
+        "createdByRole": "system"
+      },
+      {
+        "key": "ms-bars-10mm-sq-rod",
+        "label": "Ms Bars-721420 10MM SQ ROD",
+        "hsn": "721420",
+        "price": "51.30",
+        "createdAt": "14-07-2026",
+        "createdBy": "System",
+        "createdByRole": "system"
+      },
+      {
+        "key": "ms-flat-32x6f",
+        "label": "Ms Flat - 721114 32X6F",
+        "hsn": "721114",
+        "price": "51.30",
+        "createdAt": "14-07-2026",
+        "createdBy": "System",
+        "createdByRole": "system"
+      },
+      {
+        "key": "ms-flat-40x6f",
+        "label": "Ms Flat - 721114 40X6F",
+        "hsn": "721114",
+        "price": "52.10",
+        "createdAt": "14-07-2026",
+        "createdBy": "System",
+        "createdByRole": "system"
+      },
+      {
+        "key": "ms-bars-16mm-r-rod",
+        "label": "Ms Bars-721420 16MM R ROD",
+        "hsn": "721420",
+        "price": "52.55",
+        "createdAt": "14-07-2026",
+        "createdBy": "System",
+        "createdByRole": "system"
+      }
+    ],
+    "purchases": [
+      {
+        "invoiceNo": "FPAT/26-27/010",
+        "invoiceDate": "13-06-2026",
+        "supplier": {
+          "name": "FAB PIPES AND TUBES",
+          "address": "S.F.No 551/2A, FATIMA THOTTAM, UPPUPARA POST, L&T BYEPASS ROAD, 13-Jun-26, TN59AT1256, TMBL0000460",
+          "gstin": "33HMIPS8654D1ZM",
+          "phone": "9585880201",
+          "email": "fabpipesandtubes@gmail.com"
+        },
+        "items": [
+          {
+            "description": "STEELTUBE (COMM. QUALITY GALVANIZE) (STOCK)",
+            "hsn": "73061911",
+            "qty": 10480,
+            "uom": "KGS",
+            "rate": 62.9,
+            "taxableAmount": 777847,
+            "gstRate": 18,
+            "gstAmount": 118655,
+            "totalAmount": 777847
+          }
+        ],
+        "taxableValue": 777847,
+        "cgst": 59327,
+        "sgst": 59327,
+        "igst": 0,
+        "totalGst": 118655,
+        "roundOff": 0,
+        "totalAmount": 777847,
+        "ewayBillNo": "5920 2079 6398",
+        "vehicleNo": "TN59AT1256",
+        "id": "purchase-1784006522017",
+        "sourceFileName": "Invoice Fab Pipes And Tubes_26-27_010 (LUCKY TRADERS).pdf",
+        "sourceFileUri": "file:///var/mobile/Containers/Data/Application/FA7A3BA7-46EE-4536-A9BB-D3E8F7BCD31F/Documents/ExponentExperienceData/@anonymous/lucky-traders-invoice-mobile-578b92ff-d499-4b1c-9daf-e0ea5dbbe797/lucky-traders-sync-files/purchase-purchase-1784006522017-Invoice-Fab-Pipes-And-Tubes_26-27_010-LUCKY-TRADERS-.pdf",
+        "sourceFileSize": 580510,
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin",
+        "updatedAt": "14-07-2026",
+        "updatedBy": "Syed Khalid Ahamed",
+        "updatedByRole": "admin"
+      },
+      {
+        "invoiceNo": "FPAT/26-27/004",
+        "invoiceDate": "30-04-2026",
+        "supplier": {
+          "name": "FAB PIPES AND TUBES",
+          "address": "S.F.No 551/2A, FATIMA THOTTAM, UPPUPARA POST, L&T BYEPASS ROAD, MADUKKARAI, COIMBATORE, TAMILNADU - 641105",
+          "gstin": "33HMIPS8654D1ZM",
+          "phone": "9585880201",
+          "email": "fabpipesandtubes@gmail.com"
+        },
+        "items": [
+          {
+            "description": "STEELTUBE (COMM. QUALITY GALVANIZE) (STOCK)",
+            "hsn": "73061911",
+            "qty": 10050,
+            "uom": "KGS",
+            "rate": 63.72,
+            "taxableAmount": 640386,
+            "gstRate": 18,
+            "gstAmount": 115269,
+            "totalAmount": 755655
+          }
+        ],
+        "taxableValue": 640386,
+        "cgst": 0,
+        "sgst": 0,
+        "igst": 115269,
+        "totalGst": 115269,
+        "roundOff": 0,
+        "totalAmount": 755655,
+        "ewayBillNo": "",
+        "vehicleNo": "TN29AD3654",
+        "id": "purchase-1784006488585",
+        "sourceFileName": "Invoice Fab Pipes And Tubes_26-27_004 (LUCKY TRADERS).pdf",
+        "sourceFileUri": "file:///var/mobile/Containers/Data/Application/FA7A3BA7-46EE-4536-A9BB-D3E8F7BCD31F/Documents/ExponentExperienceData/@anonymous/lucky-traders-invoice-mobile-578b92ff-d499-4b1c-9daf-e0ea5dbbe797/lucky-traders-sync-files/purchase-purchase-1784006488585-Invoice-Fab-Pipes-And-Tubes_26-27_004-LUCKY-TRADERS-.pdf",
+        "sourceFileSize": 583297,
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin"
+      },
+      {
+        "invoiceNo": "1628",
+        "invoiceDate": "13-07-2026",
+        "supplier": {
+          "name": "Inframat Alloys Pvt. Ltd.",
+          "address": "Sy No. 60-1A1, Shoolapalli Village, Thiagarasanapalli, Panchayat, Shoolagiri Post and Taluk, Krishnagiri District, Tamil Nadu, - 635117.",
+          "gstin": "33AACCI9652H1ZH",
+          "phone": "+917022001155",
+          "email": "accounts@inframat.in"
+        },
+        "items": [
+          {
+            "description": "STEELTUBE(COMM. QUALITY GALVANIZE) (STOCK)",
+            "hsn": "73061911",
+            "qty": 11.04,
+            "uom": "MTS",
+            "rate": 61016.949,
+            "taxableAmount": 673627,
+            "gstRate": 18,
+            "gstAmount": 121252.86,
+            "totalAmount": 794880
+          }
+        ],
+        "taxableValue": 673627,
+        "cgst": 60626.43,
+        "sgst": 60626.43,
+        "igst": 0,
+        "totalGst": 121252.86,
+        "roundOff": 0.14,
+        "totalAmount": 794880,
+        "ewayBillNo": "7418287561",
+        "vehicleNo": "TN24AQ 0915",
+        "id": "purchase-1784006475667",
+        "sourceFileName": "07:13.pdf",
+        "sourceFileUri": "file:///var/mobile/Containers/Data/Application/FA7A3BA7-46EE-4536-A9BB-D3E8F7BCD31F/Documents/ExponentExperienceData/@anonymous/lucky-traders-invoice-mobile-578b92ff-d499-4b1c-9daf-e0ea5dbbe797/lucky-traders-sync-files/purchase-purchase-1784006475667-07-13.pdf",
+        "sourceFileSize": 20299,
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin"
+      },
+      {
+        "invoiceNo": "1464",
+        "invoiceDate": "04-07-2026",
+        "supplier": {
+          "name": "Inframat Alloys Pvt. Ltd.",
+          "address": "Sy No. 60-1A1, Shoolapalli Village, Thiagarasanapalli, Panchayat, Shoolagiri Post and Taluk, Krishnagiri District, Tamil Nadu, - 635117.",
+          "gstin": "33AACCI9652H1ZH",
+          "phone": "+917022001155",
+          "email": "accounts@inframat.in"
+        },
+        "items": [
+          {
+            "description": "STEELTUBE(COMM. QUALITY GALVANIZE) (STOCK)",
+            "hsn": "73061911",
+            "qty": 20.64,
+            "uom": "MTS",
+            "rate": 61016.949,
+            "taxableAmount": 1259390,
+            "gstRate": 18,
+            "gstAmount": 226690.2,
+            "totalAmount": 1486080
+          }
+        ],
+        "taxableValue": 1259390,
+        "cgst": 113345.1,
+        "sgst": 113345.1,
+        "igst": 0,
+        "totalGst": 226690.2,
+        "roundOff": -0.2,
+        "totalAmount": 1486080,
+        "ewayBillNo": "7550346375",
+        "vehicleNo": "KA01AE 4978",
+        "id": "purchase-1784006461701",
+        "sourceFileName": "07:04.pdf",
+        "sourceFileUri": "file:///var/mobile/Containers/Data/Application/FA7A3BA7-46EE-4536-A9BB-D3E8F7BCD31F/Documents/ExponentExperienceData/@anonymous/lucky-traders-invoice-mobile-578b92ff-d499-4b1c-9daf-e0ea5dbbe797/lucky-traders-sync-files/purchase-purchase-1784006461701-07-04.pdf",
+        "sourceFileSize": 20295,
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin"
+      },
+      {
+        "invoiceNo": "1255",
+        "invoiceDate": "23-06-2026",
+        "supplier": {
+          "name": "Inframat Alloys Pvt. Ltd.",
+          "address": "Sy No. 60-1A1, Shoolapalli Village, Thiagarasanapalli, Panchayat, Shoolagiri Post and Taluk, Krishnagiri District, Tamil Nadu, - 635117.",
+          "gstin": "33AACCI9652H1ZH",
+          "phone": "+917022001155",
+          "email": "accounts@inframat.in"
+        },
+        "items": [
+          {
+            "description": "STEELTUBE(COMM. QUALITY GALVANIZE) (STOCK)",
+            "hsn": "73061911",
+            "qty": 20.08,
+            "uom": "MTS",
+            "rate": 61016.949,
+            "taxableAmount": 1225220,
+            "gstRate": 18,
+            "gstAmount": 220539.6,
+            "totalAmount": 1445760
+          }
+        ],
+        "taxableValue": 1225220,
+        "cgst": 110269.8,
+        "sgst": 110269.8,
+        "igst": 0,
+        "totalGst": 220539.6,
+        "roundOff": 0.4,
+        "totalAmount": 1445760,
+        "ewayBillNo": "8056556916",
+        "vehicleNo": "",
+        "id": "purchase-1784006439602",
+        "sourceFileName": "06:23.pdf",
+        "sourceFileUri": "file:///var/mobile/Containers/Data/Application/FA7A3BA7-46EE-4536-A9BB-D3E8F7BCD31F/Documents/ExponentExperienceData/@anonymous/lucky-traders-invoice-mobile-578b92ff-d499-4b1c-9daf-e0ea5dbbe797/lucky-traders-sync-files/purchase-purchase-1784006439602-06-23.pdf",
+        "sourceFileSize": 20307,
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin"
+      },
+      {
+        "invoiceNo": "767",
+        "invoiceDate": "23-05-2026",
+        "supplier": {
+          "name": "Inframat Alloys Pvt. Ltd.",
+          "address": "Sy No. 60-1A1, Shoolapalli Village, Thiagarasanapalli, Panchayat, Shoolagiri Post and Taluk, Krishnagiri District, Tamil Nadu, - 635117.",
+          "gstin": "33AACCI9652H1ZH",
+          "phone": "+917022001155",
+          "email": "accounts@inframat.in"
+        },
+        "items": [
+          {
+            "description": "STEELTUBE(COMM. QUALITY GALVANIZE) (STOCK)",
+            "hsn": "73061911",
+            "qty": 20.03,
+            "uom": "MTS",
+            "rate": 61440.678,
+            "taxableAmount": 1230657,
+            "gstRate": 18,
+            "gstAmount": 221518.26,
+            "totalAmount": 1452175
+          }
+        ],
+        "taxableValue": 1230657,
+        "cgst": 110759.13,
+        "sgst": 110759.13,
+        "igst": 0,
+        "totalGst": 221518.26,
+        "roundOff": -0.26,
+        "totalAmount": 1452175,
+        "ewayBillNo": "7418287561",
+        "vehicleNo": "TN29AP 5666",
+        "id": "purchase-1784006429601",
+        "sourceFileName": "05:23.pdf",
+        "sourceFileUri": "file:///var/mobile/Containers/Data/Application/FA7A3BA7-46EE-4536-A9BB-D3E8F7BCD31F/Documents/ExponentExperienceData/@anonymous/lucky-traders-invoice-mobile-578b92ff-d499-4b1c-9daf-e0ea5dbbe797/lucky-traders-sync-files/purchase-purchase-1784006429601-05-23.pdf",
+        "sourceFileSize": 20303,
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin"
+      },
+      {
+        "invoiceNo": "346",
+        "invoiceDate": "24-04-2026",
+        "supplier": {
+          "name": "Inframat Alloys Pvt. Ltd.",
+          "address": "Sy No. 60-1A1, Shoolapalli Village, Thiagarasanapalli, Panchayat, Shoolagiri Post and Taluk, Krishnagiri District, Tamil Nadu, - 635117.",
+          "gstin": "33AACCI9652H1ZH",
+          "phone": "+917022001155",
+          "email": "accounts@inframat.in"
+        },
+        "items": [
+          {
+            "description": "STEELTUBE(COMM. QUALITY GALVANIZE) (STOCK)",
+            "hsn": "73061911",
+            "qty": 9.29,
+            "uom": "MTS",
+            "rate": 48728.814,
+            "taxableAmount": 452691,
+            "gstRate": 18,
+            "gstAmount": 81484.38,
+            "totalAmount": 534175
+          }
+        ],
+        "taxableValue": 452691,
+        "cgst": 40742.19,
+        "sgst": 40742.19,
+        "igst": 0,
+        "totalGst": 81484.38,
+        "roundOff": -0.38,
+        "totalAmount": 534175,
+        "ewayBillNo": "9894838769",
+        "vehicleNo": "TN24AQ 0915",
+        "id": "purchase-1784006419050",
+        "sourceFileName": "04:24.pdf",
+        "sourceFileUri": "file:///var/mobile/Containers/Data/Application/FA7A3BA7-46EE-4536-A9BB-D3E8F7BCD31F/Documents/ExponentExperienceData/@anonymous/lucky-traders-invoice-mobile-578b92ff-d499-4b1c-9daf-e0ea5dbbe797/lucky-traders-sync-files/purchase-purchase-1784006419050-04-24.pdf",
+        "sourceFileSize": 20283,
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin"
+      },
+      {
+        "invoiceNo": "175",
+        "invoiceDate": "13-04-2026",
+        "supplier": {
+          "name": "Inframat Alloys Pvt. Ltd.",
+          "address": "Sy No. 60-1A1, Shoolapalli Village, Thiagarasanapalli, Panchayat, Shoolagiri Post and Taluk, Krishnagiri District, Tamil Nadu, - 635117.",
+          "gstin": "33AACCI9652H1ZH",
+          "phone": "+917022001155",
+          "email": "accounts@inframat.in"
+        },
+        "items": [
+          {
+            "description": "STEELTUBE(COMM. QUALITY GALVANIZE) (STOCK)",
+            "hsn": "73061911",
+            "qty": 7.89,
+            "uom": "MTS",
+            "rate": 54000,
+            "taxableAmount": 426060,
+            "gstRate": 18,
+            "gstAmount": 76690.8,
+            "totalAmount": 502751
+          }
+        ],
+        "taxableValue": 426060,
+        "cgst": 38345.4,
+        "sgst": 38345.4,
+        "igst": 0,
+        "totalGst": 76690.8,
+        "roundOff": 0.2,
+        "totalAmount": 502751,
+        "ewayBillNo": "7418287561",
+        "vehicleNo": "TN24AQ 0915",
+        "id": "purchase-1784006411767",
+        "sourceFileName": "04:13.pdf",
+        "sourceFileUri": "file:///var/mobile/Containers/Data/Application/FA7A3BA7-46EE-4536-A9BB-D3E8F7BCD31F/Documents/ExponentExperienceData/@anonymous/lucky-traders-invoice-mobile-578b92ff-d499-4b1c-9daf-e0ea5dbbe797/lucky-traders-sync-files/purchase-purchase-1784006411767-04-13.pdf",
+        "sourceFileSize": 20280,
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin"
+      },
+      {
+        "invoiceNo": "115",
+        "invoiceDate": "09-04-2026",
+        "supplier": {
+          "name": "Inframat Alloys Pvt. Ltd.",
+          "address": "Sy No. 60-1A1, Shoolapalli Village, Thiagarasanapalli, Panchayat, Shoolagiri Post and Taluk, Krishnagiri District, Tamil Nadu, - 635117.",
+          "gstin": "33AACCI9652H1ZH",
+          "phone": "+917022001155",
+          "email": "accounts@inframat.in"
+        },
+        "items": [
+          {
+            "description": "STEELTUBE(COMM. QUALITY GALVANIZE) (STOCK)",
+            "hsn": "73061911",
+            "qty": 20.51,
+            "uom": "MTS",
+            "rate": 62288.136,
+            "taxableAmount": 1277530,
+            "gstRate": 18,
+            "gstAmount": 229955.4,
+            "totalAmount": 1507485
+          }
+        ],
+        "taxableValue": 1277530,
+        "cgst": 114977.7,
+        "sgst": 114977.7,
+        "igst": 0,
+        "totalGst": 229955.4,
+        "roundOff": -0.4,
+        "totalAmount": 1507485,
+        "ewayBillNo": "7549793037",
+        "vehicleNo": "TN28AQ 9525",
+        "id": "purchase-1784006395849",
+        "sourceFileName": "04:09.pdf",
+        "sourceFileUri": "file:///var/mobile/Containers/Data/Application/FA7A3BA7-46EE-4536-A9BB-D3E8F7BCD31F/Documents/ExponentExperienceData/@anonymous/lucky-traders-invoice-mobile-578b92ff-d499-4b1c-9daf-e0ea5dbbe797/lucky-traders-sync-files/purchase-purchase-1784006395849-04-09.pdf",
+        "sourceFileSize": 20302,
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin"
+      },
+      {
+        "invoiceNo": "63",
+        "invoiceDate": "06-04-2026",
+        "supplier": {
+          "name": "Inframat Alloys Pvt. Ltd.",
+          "address": "Sy No. 60-1A1, Shoolapalli Village, Thiagarasanapalli, Panchayat, Shoolagiri Post and Taluk, Krishnagiri District, Tamil Nadu, - 635117.",
+          "gstin": "33AACCI9652H1ZH",
+          "phone": "+917022001155",
+          "email": "accounts@inframat.in"
+        },
+        "items": [
+          {
+            "description": "STEELTUBE(COMM. QUALITY GALVANIZE) (STOCK)",
+            "hsn": "73061911",
+            "qty": 10020,
+            "uom": "Kg",
+            "rate": 62.288136,
+            "taxableAmount": 624127,
+            "gstRate": 18,
+            "gstAmount": 112342.86,
+            "totalAmount": 736470
+          }
+        ],
+        "taxableValue": 624127,
+        "cgst": 56171.43,
+        "sgst": 56171.43,
+        "igst": 0,
+        "totalGst": 112342.86,
+        "roundOff": 0.14,
+        "totalAmount": 736470,
+        "ewayBillNo": "7418287589",
+        "vehicleNo": "TN24AQ 0915",
+        "id": "purchase-1784006363356",
+        "sourceFileName": "04:06.pdf",
+        "sourceFileUri": "file:///var/mobile/Containers/Data/Application/FA7A3BA7-46EE-4536-A9BB-D3E8F7BCD31F/Documents/ExponentExperienceData/@anonymous/lucky-traders-invoice-mobile-578b92ff-d499-4b1c-9daf-e0ea5dbbe797/lucky-traders-sync-files/purchase-purchase-1784006363356-04-06.pdf",
+        "sourceFileSize": 20290,
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin",
+        "updatedAt": "14-07-2026",
+        "updatedBy": "Syed Khalid Ahamed",
+        "updatedByRole": "admin"
+      }
+    ],
+    "employees": [
+      {
+        "id": "employee-1784010408679",
+        "name": "Aslam",
+        "role": "Sales and store Assistant",
+        "phone": "+91 90258 17372",
+        "salaryMode": "monthly",
+        "baseSalary": 14000,
+        "joinDate": "01-07-2026",
+        "status": "active",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin",
+        "updatedAt": "14-07-2026",
+        "updatedBy": "Syed Khalid Ahamed",
+        "updatedByRole": "admin"
+      },
+      {
+        "id": "employee-1784010038587",
+        "name": "Shafi",
+        "role": "Operation Executive",
+        "phone": "+91 98653 31048",
+        "salaryMode": "monthly",
+        "baseSalary": 20000,
+        "joinDate": "01-07-2026",
+        "status": "active",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin",
+        "updatedAt": "14-07-2026",
+        "updatedBy": "Syed Khalid Ahamed",
+        "updatedByRole": "admin"
+      }
+    ],
+    "salaries": [],
+    "expenses": [],
+    "payments": [
+      {
+        "id": "payment-1784817902023",
+        "invoiceId": "invoice-1784817741702",
+        "invoiceNo": "#LT011",
+        "invoiceDate": "16-07-2026",
+        "clientName": "AARADHANA TRADERS",
+        "clientGstin": "33CMJPV5578B1ZQ",
+        "clientPhone": "+91 9715141819",
+        "invoiceTotal": 217620,
+        "paymentDate": "16-07-2026",
+        "amount": 217620,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "23-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018125702",
+        "invoiceId": "invoice-gs021-prince-mathiyalagan",
+        "invoiceNo": "#GS-021-KRI",
+        "invoiceDate": "07-04-2026",
+        "clientName": "Prince Mathiyalagan -TN29BU9878",
+        "clientGstin": "URP",
+        "clientPhone": "+919715127410",
+        "invoiceTotal": 24367,
+        "paymentDate": "14-07-2026",
+        "amount": 24367,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018121552",
+        "invoiceId": "invoice-gs022-aaradhana-traders",
+        "invoiceNo": "#GS-022-KRI",
+        "invoiceDate": "08-04-2026",
+        "clientName": "AARADHANA TRADERS",
+        "clientGstin": "33CMJPV5578B1ZQ",
+        "clientPhone": "+91 9715141819",
+        "invoiceTotal": 374217,
+        "paymentDate": "14-07-2026",
+        "amount": 374217,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018118302",
+        "invoiceId": "invoice-gs024-afza-material-handling-storage-system",
+        "invoiceNo": "#GS-024-KRI",
+        "invoiceDate": "18-04-2026",
+        "clientName": "AFZA MATETIAL HANDLING & STORAGE SYSTEM",
+        "clientGstin": "URP",
+        "clientPhone": "+91 9080737627",
+        "invoiceTotal": 28441,
+        "paymentDate": "14-07-2026",
+        "amount": 28441,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018113853",
+        "invoiceId": "invoice-1783993659492",
+        "invoiceNo": "#LT001",
+        "invoiceDate": "02-05-2026",
+        "clientName": "HINDUSTAN STEELS & CEMENT",
+        "clientGstin": "33EYDPA4709P1ZB",
+        "clientPhone": "+91 93454 66572",
+        "invoiceTotal": 232260,
+        "paymentDate": "14-07-2026",
+        "amount": 232260,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018107853",
+        "invoiceId": "invoice-ls004-kumutha-plastic-industries",
+        "invoiceNo": "#LS004",
+        "invoiceDate": "26-05-2026",
+        "clientName": "KUMUTHA PLASTIC INDUSTRIES",
+        "clientGstin": "33COGPK3609P1ZN",
+        "clientPhone": "+91 9043411825",
+        "invoiceTotal": 49969,
+        "paymentDate": "14-07-2026",
+        "amount": 49969,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018104136",
+        "invoiceId": "invoice-lt005-prince-mathiyalagan",
+        "invoiceNo": "#LT005",
+        "invoiceDate": "14-06-2026",
+        "clientName": "Prince Mathiyalagan",
+        "clientGstin": "URP",
+        "clientPhone": "+919715127410",
+        "invoiceTotal": 215534,
+        "paymentDate": "14-07-2026",
+        "amount": 215534,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018100937",
+        "invoiceId": "invoice-lt006-aaradhana-traders",
+        "invoiceNo": "#LT006",
+        "invoiceDate": "14-06-2026",
+        "clientName": "AARADHANA TRADERS",
+        "clientGstin": "33CMJPV5578B1ZQ",
+        "clientPhone": "+91 9715141819",
+        "invoiceTotal": 331500,
+        "paymentDate": "14-07-2026",
+        "amount": 331500,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018094971",
+        "invoiceId": "invoice-lt010-hindustan-steels-cement",
+        "invoiceNo": "#LT010",
+        "invoiceDate": "14-07-2026",
+        "clientName": "HINDUSTAN STEELS & CEMENT",
+        "clientGstin": "33EYDPA4709P1ZB",
+        "clientPhone": "+91 93454 66572",
+        "invoiceTotal": 256700,
+        "paymentDate": "14-07-2026",
+        "amount": 256700,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018092455",
+        "invoiceId": "invoice-lt009-new-hindustan-steels-and-hardwares",
+        "invoiceNo": "#LT009",
+        "invoiceDate": "14-07-2026",
+        "clientName": "NEW HINDUSTAN STEELS AND HARDWARES",
+        "clientGstin": "33CGGPM7511L1Z9",
+        "clientPhone": "+91 93456 06657",
+        "invoiceTotal": 218195,
+        "paymentDate": "14-07-2026",
+        "amount": 218195,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018083572",
+        "invoiceId": "invoice-1783996298876",
+        "invoiceNo": "#LT002",
+        "invoiceDate": "07-05-2026",
+        "clientName": "Three Star Steels And Bottles",
+        "clientGstin": "32AAOFT8015G1Z5",
+        "clientPhone": "+91 9846786009",
+        "invoiceTotal": 799632,
+        "paymentDate": "14-07-2026",
+        "amount": 799632,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018077406",
+        "invoiceId": "invoice-gs023-three-star-steels-and-bottles",
+        "invoiceNo": "#GS-023-KRI",
+        "invoiceDate": "09-04-2026",
+        "clientName": "Three Star Steels And Bottles",
+        "clientGstin": "32AAOFT8015G1Z5",
+        "clientPhone": "+91 9846786009",
+        "invoiceTotal": 1548504,
+        "paymentDate": "14-07-2026",
+        "amount": 1548504,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018068290",
+        "invoiceId": "invoice-lt008-three-star-steels-and-bottles",
+        "invoiceNo": "#LT008",
+        "invoiceDate": "04-07-2026",
+        "clientName": "Three Star Steels And Bottles",
+        "clientGstin": "32AAOFT8015G1Z5",
+        "clientPhone": "+91 98467 86009",
+        "invoiceTotal": 1532520,
+        "paymentDate": "14-07-2026",
+        "amount": 1532520,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018065591",
+        "invoiceId": "invoice-lt007-three-star-steels-and-bottles",
+        "invoiceNo": "#LT007",
+        "invoiceDate": "23-06-2026",
+        "clientName": "Three Star Steels And Bottles",
+        "clientGstin": "32AAOFT8015G1Z5",
+        "clientPhone": "+91 98467 86009",
+        "invoiceTotal": 1495960,
+        "paymentDate": "14-07-2026",
+        "amount": 1495960,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018061691",
+        "invoiceId": "invoice-1783996632211",
+        "invoiceNo": "#LT003",
+        "invoiceDate": "23-05-2026",
+        "clientName": "Three Star Steels And Bottles",
+        "clientGstin": "32AAOFT8015G1Z5",
+        "clientPhone": "+91 9846786009",
+        "invoiceTotal": 1512265,
+        "paymentDate": "14-07-2026",
+        "amount": 1512265,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018055758",
+        "invoiceId": "invoice-gs020-muniyappan-sevathan",
+        "invoiceNo": "#GS-020-KRI",
+        "invoiceDate": "07-04-2026",
+        "clientName": "Muniyappan Sevathan - TN29BP7081",
+        "clientGstin": "URP",
+        "clientPhone": "",
+        "invoiceTotal": 33418,
+        "paymentDate": "14-07-2026",
+        "amount": 33418,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "payment-1784018051928",
+        "invoiceId": "invoice-gs019-raghul-m",
+        "invoiceNo": "#GS-019-KRI",
+        "invoiceDate": "03-04-2026",
+        "clientName": "RAGHUL M",
+        "clientGstin": "URP",
+        "clientPhone": "+91 8754417143",
+        "invoiceTotal": 338778,
+        "paymentDate": "14-07-2026",
+        "amount": 338778,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      }
+    ],
+    "supplierPayments": [
+      {
+        "id": "supplier-payment-1784017922703",
+        "purchaseId": "purchase-1784006429601",
+        "purchaseInvoiceNo": "767",
+        "purchaseDate": "23-05-2026",
+        "supplierName": "Inframat Alloys Pvt. Ltd.",
+        "supplierGstin": "33AACCI9652H1ZH",
+        "supplierPhone": "+917022001155",
+        "purchaseTotal": 1452175,
+        "paymentDate": "14-07-2026",
+        "amount": 1452175,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "supplier-payment-1784017917636",
+        "purchaseId": "purchase-1784006488585",
+        "purchaseInvoiceNo": "FPAT/26-27/004",
+        "purchaseDate": "30-04-2026",
+        "supplierName": "FAB PIPES AND TUBES",
+        "supplierGstin": "33HMIPS8654D1ZM",
+        "supplierPhone": "9585880201",
+        "purchaseTotal": 755655,
+        "paymentDate": "14-07-2026",
+        "amount": 755655,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "supplier-payment-1784017913287",
+        "purchaseId": "purchase-1784006419050",
+        "purchaseInvoiceNo": "346",
+        "purchaseDate": "24-04-2026",
+        "supplierName": "Inframat Alloys Pvt. Ltd.",
+        "supplierGstin": "33AACCI9652H1ZH",
+        "supplierPhone": "+917022001155",
+        "purchaseTotal": 534175,
+        "paymentDate": "14-07-2026",
+        "amount": 534175,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "supplier-payment-1784017908288",
+        "purchaseId": "purchase-1784006411767",
+        "purchaseInvoiceNo": "175",
+        "purchaseDate": "13-04-2026",
+        "supplierName": "Inframat Alloys Pvt. Ltd.",
+        "supplierGstin": "33AACCI9652H1ZH",
+        "supplierPhone": "+917022001155",
+        "purchaseTotal": 502751,
+        "paymentDate": "14-07-2026",
+        "amount": 502751,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "supplier-payment-1784017901388",
+        "purchaseId": "purchase-1784006395849",
+        "purchaseInvoiceNo": "115",
+        "purchaseDate": "09-04-2026",
+        "supplierName": "Inframat Alloys Pvt. Ltd.",
+        "supplierGstin": "33AACCI9652H1ZH",
+        "supplierPhone": "+917022001155",
+        "purchaseTotal": 1507485,
+        "paymentDate": "14-07-2026",
+        "amount": 1507485,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "supplier-payment-1784017887355",
+        "purchaseId": "purchase-1784006439602",
+        "purchaseInvoiceNo": "1255",
+        "purchaseDate": "23-06-2026",
+        "supplierName": "Inframat Alloys Pvt. Ltd.",
+        "supplierGstin": "33AACCI9652H1ZH",
+        "supplierPhone": "+917022001155",
+        "purchaseTotal": 1445760,
+        "paymentDate": "14-07-2026",
+        "amount": 1445760,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "supplier-payment-1784017829795",
+        "purchaseId": "purchase-1784006522017",
+        "purchaseInvoiceNo": "FPAT/26-27/010",
+        "purchaseDate": "13-06-2026",
+        "supplierName": "FAB PIPES AND TUBES",
+        "supplierGstin": "33HMIPS8654D1ZM",
+        "supplierPhone": "9585880201",
+        "purchaseTotal": 777847,
+        "paymentDate": "14-07-2026",
+        "amount": 777847,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "supplier-payment-1784017818214",
+        "purchaseId": "purchase-1784006461701",
+        "purchaseInvoiceNo": "1464",
+        "purchaseDate": "04-07-2026",
+        "supplierName": "Inframat Alloys Pvt. Ltd.",
+        "supplierGstin": "33AACCI9652H1ZH",
+        "supplierPhone": "+917022001155",
+        "purchaseTotal": 1486080,
+        "paymentDate": "14-07-2026",
+        "amount": 1486080,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "supplier-payment-1784017809113",
+        "purchaseId": "purchase-1784006363356",
+        "purchaseInvoiceNo": "63",
+        "purchaseDate": "06-04-2026",
+        "supplierName": "Inframat Alloys Pvt. Ltd.",
+        "supplierGstin": "33AACCI9652H1ZH",
+        "supplierPhone": "+917022001155",
+        "purchaseTotal": 736470,
+        "paymentDate": "14-07-2026",
+        "amount": 736470,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      },
+      {
+        "id": "supplier-payment-1784017777004",
+        "purchaseId": "purchase-1784006475667",
+        "purchaseInvoiceNo": "1628",
+        "purchaseDate": "13-07-2026",
+        "supplierName": "Inframat Alloys Pvt. Ltd.",
+        "supplierGstin": "33AACCI9652H1ZH",
+        "supplierPhone": "+917022001155",
+        "purchaseTotal": 794880,
+        "paymentDate": "14-07-2026",
+        "amount": 794880,
+        "paymentMode": "bank",
+        "referenceNo": "",
+        "note": "",
+        "createdAt": "14-07-2026",
+        "createdBy": "Syed Khalid Ahamed",
+        "createdByRole": "admin"
+      }
+    ],
+    "nextInvoiceSequence": 12,
+    "savedInvoices": [
+      {
+        "id": "invoice-1784817741702",
+        "invoiceNo": "#LT011",
+        "invoice": {
+          "invoiceNo": "#LT011",
+          "invoiceDate": "16-07-2026",
+          "sellerName": "LUCKY TRADERS",
+          "sellerAddressLines": [
+            "2/164/14 Line KollaiVenkatapuram",
+            "Krishnagiri Tamil Nadu - India. -635002"
+          ],
+          "sellerGstin": "33CJHPM0971N1ZV",
+          "sellerPhone": "+91 7418287561",
+          "gstRatePercent": 18,
+          "toName": "AARADHANA TRADERS",
+          "toAddress": "#1/239C Santhur X Road, Pochampalli, Kattagaram, Krishnagiri, Tamil Nadu-635206",
+          "toGstin": "33CMJPV5578B1ZQ",
+          "toPhone": "+91 9715141819",
+          "gstMode": "included",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "1784817519469-c8640b3ce6639",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "2790.00",
+              "price": "78.00"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5620 3825 8894",
+          "ewayDate": "16-07-2026",
+          "validDate": "17-07-2026",
+          "driver": "Vasanth kumar",
+          "vehicle": " TN24AR4308",
+          "mobile": "+91 971514189"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 2790,
+              "price": 78,
+              "amount": 217620,
+              "gstMode": "included",
+              "gstRatePercent": 18
+            }
+          ],
+          "taxable": 184423.72881355934,
+          "gst": 33196.27118644066,
+          "roundOff": 0,
+          "total": 217620
+        },
+        "savedAt": "23-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-lt010-hindustan-steels-cement",
+        "invoiceNo": "#LT010",
+        "invoice": {
+          "invoiceNo": "#LT010",
+          "invoiceDate": "14-07-2026",
+          "toName": "HINDUSTAN STEELS & CEMENT",
+          "toAddress": "#No.5/6A2, DoorNo. 1094, Jambary, Kanji, Chengam, Tiruvannamalai, Tamilnadu - 606702",
+          "toGstin": "33EYDPA4709P1ZB",
+          "toPhone": "+91 93454 66572",
+          "gstMode": "included",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "pdf-lt010-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "3400.00",
+              "price": "75.50"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5720 3677 0690",
+          "ewayDate": "14-07-2026",
+          "validDate": "15-07-2026",
+          "driver": "Sultan",
+          "vehicle": "TN24AQ0915",
+          "mobile": "+91 98948 38769"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 3400,
+              "price": 75.5,
+              "amount": 256700,
+              "gstMode": "included"
+            }
+          ],
+          "taxable": 217542.37288135596,
+          "gst": 39157.62711864404,
+          "roundOff": 0,
+          "total": 256700
+        },
+        "savedAt": "14-07-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "shared"
+      },
+      {
+        "id": "invoice-lt009-new-hindustan-steels-and-hardwares",
+        "invoiceNo": "#LT009",
+        "invoice": {
+          "invoiceNo": "#LT009",
+          "invoiceDate": "14-07-2026",
+          "toName": "NEW HINDUSTAN STEELS AND HARDWARES",
+          "toAddress": "#2/415, Road Street, Near Primary Health Centre, Veeralur, Kalasapakkam, Tiruvannamalai, Tamil Nadu - 606908",
+          "toGstin": "33CGGPM7511L1Z9",
+          "toPhone": "+91 93456 06657",
+          "gstMode": "included",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "pdf-lt009-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "2890.00",
+              "price": "75.50"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5520 3677 0470",
+          "ewayDate": "14-07-2026",
+          "validDate": "15-07-2026",
+          "driver": "Sultan",
+          "vehicle": "TN24AQ0915",
+          "mobile": "+91 98948 38769"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 2890,
+              "price": 75.5,
+              "amount": 218195,
+              "gstMode": "included"
+            }
+          ],
+          "taxable": 184911.01694915254,
+          "gst": 33283.983050847455,
+          "roundOff": 0,
+          "total": 218195
+        },
+        "savedAt": "14-07-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-lt008-three-star-steels-and-bottles",
+        "invoiceNo": "#LT008",
+        "invoice": {
+          "invoiceNo": "#LT008",
+          "invoiceDate": "04-07-2026",
+          "toName": "Three Star Steels And Bottles",
+          "toAddress": "#Godown No- 19/30B, Manjalungal, Ongallur, Kalladipatta, Pattambi, Palakkad",
+          "toGstin": "32AAOFT8015G1Z5",
+          "toPhone": "+91 98467 86009",
+          "gstMode": "included",
+          "gstType": "igst",
+          "products": [
+            {
+              "id": "pdf-lt008-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "20640.00",
+              "price": "74.25"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5120 3208 8953",
+          "ewayDate": "04-07-2026",
+          "validDate": "06-07-2026",
+          "driver": "Ramesh",
+          "vehicle": "KA01AE4978",
+          "mobile": "+91 75503 46375"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 20640,
+              "price": 74.25,
+              "amount": 1532520,
+              "gstMode": "included"
+            }
+          ],
+          "taxable": 1298745.7627118644,
+          "gst": 233774.23728813557,
+          "roundOff": 0,
+          "total": 1532520
+        },
+        "savedAt": "04-07-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-lt007-three-star-steels-and-bottles",
+        "invoiceNo": "#LT007",
+        "invoice": {
+          "invoiceNo": "#LT007",
+          "invoiceDate": "23-06-2026",
+          "toName": "Three Star Steels And Bottles",
+          "toAddress": "#Godown No- 19/30B, Manjalungal, Ongallur, Kalladipatta, Pattambi, Palakkad",
+          "toGstin": "32AAOFT8015G1Z5",
+          "toPhone": "+91 98467 86009",
+          "gstMode": "included",
+          "gstType": "igst",
+          "products": [
+            {
+              "id": "pdf-lt007-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "20080.00",
+              "price": "74.50"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5020 2549 7118",
+          "ewayDate": "23-06-2026",
+          "validDate": "25-06-2026",
+          "driver": "Anandhan",
+          "vehicle": "TN83X6880",
+          "mobile": "+918056556916"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 20080,
+              "price": 74.5,
+              "amount": 1495960,
+              "gstMode": "included"
+            }
+          ],
+          "taxable": 1267762.711864407,
+          "gst": 228197.28813559306,
+          "roundOff": 0,
+          "total": 1495960
+        },
+        "savedAt": "23-06-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-lt006-aaradhana-traders",
+        "invoiceNo": "#LT006",
+        "invoice": {
+          "invoiceNo": "#LT006",
+          "invoiceDate": "14-06-2026",
+          "toName": "AARADHANA TRADERS",
+          "toAddress": "#1/239C Santhur X Road, Pochampalli, Kattagaram, Krishnagiri, Tamil Nadu-635206",
+          "toGstin": "33CMJPV5578B1ZQ",
+          "toPhone": "+91 9715141819",
+          "gstMode": "included",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "pdf-lt006-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "4420.00",
+              "price": "75.00"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5020 2092 7566",
+          "ewayDate": "14-06-2026",
+          "validDate": "15-06-2026",
+          "driver": "Vasanth Kumar",
+          "vehicle": "TN24AR4308",
+          "mobile": "+91 97151 41819"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 4420,
+              "price": 75,
+              "amount": 331500,
+              "gstMode": "included"
+            }
+          ],
+          "taxable": 280932.20338983054,
+          "gst": 50567.79661016946,
+          "roundOff": 0,
+          "total": 331500
+        },
+        "savedAt": "14-06-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-lt005-prince-mathiyalagan",
+        "invoiceNo": "#LT005",
+        "invoice": {
+          "invoiceNo": "#LT005",
+          "invoiceDate": "14-06-2026",
+          "toName": "Prince Mathiyalagan",
+          "toAddress": "#Kambainallur main road, kasappatti (post) morappur, dharmapuri.-635305",
+          "toGstin": "URP",
+          "toPhone": "+919715127410",
+          "gstMode": "excluded",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "pdf-lt005-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "2854.00",
+              "price": "64.00"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5520 2091 0376",
+          "ewayDate": "14-06-2026",
+          "validDate": "15-06-2026",
+          "driver": "Balaji",
+          "vehicle": "TN24BH3748",
+          "mobile": "+91 96593 98909"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 2854,
+              "price": 64,
+              "amount": 182656,
+              "gstMode": "excluded"
+            }
+          ],
+          "taxable": 182656,
+          "gst": 32878.08,
+          "roundOff": -0.08,
+          "total": 215534
+        },
+        "savedAt": "14-06-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-ls004-kumutha-plastic-industries",
+        "invoiceNo": "#LS004",
+        "invoice": {
+          "invoiceNo": "#LS004",
+          "invoiceDate": "26-05-2026",
+          "toName": "KUMUTHA PLASTIC INDUSTRIES",
+          "toAddress": "#3/605D, RAJIVE GANDHI NAGAR, PALAYAMPUDUR(P.O), NALLAMPALLI(T.K), DHARMAPURI(D.T) TAMIL NADU, 636807",
+          "toGstin": "33COGPK3609P1ZN",
+          "toPhone": "+91 9043411825",
+          "gstMode": "excluded",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "pdf-ls004-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "799.00",
+              "price": "53.00"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5420 1039 9892",
+          "ewayDate": "26-05-2026",
+          "validDate": "27-05-2026",
+          "driver": "Sathiya sundaram",
+          "vehicle": "TN29CU4216",
+          "mobile": "+91 9043411825"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 799,
+              "price": 53,
+              "amount": 42347,
+              "gstMode": "excluded"
+            }
+          ],
+          "taxable": 42347,
+          "gst": 7622.46,
+          "roundOff": -0.46,
+          "total": 49969
+        },
+        "savedAt": "26-05-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-1783996632211",
+        "invoiceNo": "#LT003",
+        "invoice": {
+          "invoiceNo": "#LT003",
+          "invoiceDate": "23-05-2026",
+          "toName": "Three Star Steels And Bottles",
+          "toAddress": "#Godown No- 19/30B, Manjalungal, Ongallur, Kalladipatta, Pattambi, Palakkad",
+          "toGstin": "32AAOFT8015G1Z5",
+          "toPhone": "+91 9846786009",
+          "gstMode": "included",
+          "gstType": "igst",
+          "products": [
+            {
+              "id": "1783996469220-f5dddd93e90e48",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "20030",
+              "price": "75.50"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5020 0945 6601",
+          "ewayDate": "23-05-2026",
+          "validDate": "25-05-2026",
+          "driver": "Karthik",
+          "vehicle": "TN29AP5666",
+          "mobile": "+91 8825462457"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 20030,
+              "price": 75.5,
+              "amount": 1512265,
+              "gstMode": "included"
+            }
+          ],
+          "taxable": 1281580.5084745763,
+          "gst": 230684.4915254237,
+          "roundOff": 0,
+          "total": 1512265
+        },
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-1783996298876",
+        "invoiceNo": "#LT002",
+        "invoice": {
+          "invoiceNo": "#LT002",
+          "invoiceDate": "07-05-2026",
+          "toName": "Three Star Steels And Bottles",
+          "toAddress": "#Godown No- 19/30B, Manjalungal, Ongallur, Kalladipatta, Pattambi, Palakkad",
+          "toGstin": "32AAOFT8015G1Z5",
+          "toPhone": "+91 9846786009",
+          "gstMode": "excluded",
+          "gstType": "igst",
+          "products": [
+            {
+              "id": "1783996083894-5408334eabe3dc",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "10590",
+              "price": "63.99"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5020 0085 0729",
+          "ewayDate": "07-05-2026",
+          "validDate": "09-05-2026",
+          "driver": "Meganathan",
+          "vehicle": "TN32AS2736",
+          "mobile": "+91 9629871029"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 10590,
+              "price": 63.99,
+              "amount": 677654.1,
+              "gstMode": "excluded"
+            }
+          ],
+          "taxable": 677654.1,
+          "gst": 121977.738,
+          "roundOff": 0.16,
+          "total": 799632
+        },
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin",
+        "status": "shared"
+      },
+      {
+        "id": "invoice-1783993659492",
+        "invoiceNo": "#LT001",
+        "invoice": {
+          "invoiceNo": "#LT001",
+          "invoiceDate": "02-05-2026",
+          "toName": "HINDUSTAN STEELS & CEMENT",
+          "toAddress": "#No.5/6A2, DoorNo. 1094, Jambary, Kanji, Chengam, Tiruvannamalai, Tamilnadu - 606702",
+          "toGstin": "33EYDPA4709P1ZB",
+          "toPhone": "+91 93454 66572",
+          "gstMode": "included",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "1783993652753-bb6349210d44c",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "2940.00",
+              "price": "79.00"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5919 9802 9592",
+          "ewayDate": "02-05-2026",
+          "validDate": "03-05-2026",
+          "driver": "Balaji",
+          "vehicle": "TN24BH3748",
+          "mobile": "+91 9659398909"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 2940,
+              "price": 79,
+              "amount": 232260,
+              "gstMode": "included"
+            }
+          ],
+          "taxable": 196830.5084745763,
+          "gst": 35429.49152542371,
+          "roundOff": 0,
+          "total": 232260
+        },
+        "savedAt": "14-07-2026",
+        "savedBy": "Admin",
+        "savedByRole": "admin",
+        "status": "shared"
+      },
+      {
+        "id": "invoice-gs024-afza-material-handling-storage-system",
+        "invoiceNo": "#GS-024-KRI",
+        "invoice": {
+          "sellerName": "Golden Steel",
+          "sellerAddressLines": [
+            "#343A, Nethaji Road, Krishnagiri",
+            "Tamil Nadu - India. - 635001"
+          ],
+          "sellerGstin": "33CJHPM0971N1ZV",
+          "sellerPhone": "+91 7418287561",
+          "invoiceNo": "#GS-024-KRI",
+          "invoiceDate": "18-04-2026",
+          "toName": "AFZA MATETIAL HANDLING & STORAGE SYSTEM",
+          "toAddress": "#GANGALERI",
+          "toGstin": "URP",
+          "toPhone": "+91 9080737627",
+          "gstMode": "included",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "pdf-gs024-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "263.00",
+              "price": "67.50"
+            },
+            {
+              "id": "pdf-gs024-ms-flat",
+              "productKey": "ms-flat-32x6f",
+              "hsn": "721114",
+              "qty": "167.00",
+              "price": "64.00"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": false,
+          "eway": "",
+          "ewayDate": "18-04-2026",
+          "validDate": "19-04-2026",
+          "driver": "",
+          "vehicle": "",
+          "mobile": ""
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 263,
+              "price": 67.5,
+              "amount": 17752.5,
+              "gstMode": "included"
+            },
+            {
+              "index": 2,
+              "kind": "product",
+              "description": "Ms Flat - 721114 32X6F",
+              "hsn": "721114",
+              "qty": 167,
+              "price": 64,
+              "amount": 10688,
+              "gstMode": "included"
+            }
+          ],
+          "taxable": 24102.1186440678,
+          "gst": 4338.3813559322025,
+          "roundOff": 0.5,
+          "total": 28441
+        },
+        "savedAt": "18-04-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-gs023-three-star-steels-and-bottles",
+        "invoiceNo": "#GS-023-KRI",
+        "invoice": {
+          "sellerName": "Golden Steel",
+          "sellerAddressLines": [
+            "#343A, Nethaji Road, Krishnagiri",
+            "Tamil Nadu - India. - 635001"
+          ],
+          "sellerGstin": "33CJHPM0971N1ZV",
+          "sellerPhone": "+91 7418287561",
+          "invoiceNo": "#GS-023-KRI",
+          "invoiceDate": "09-04-2026",
+          "toName": "Three Star Steels And Bottles",
+          "toAddress": "#Godown No- 19/30B, Manjalungal, Ongallur, Kalladipatta, Pattambi, Palakkad",
+          "toGstin": "32AAOFT8015G1Z5",
+          "toPhone": "+91 9846786009",
+          "gstMode": "excluded",
+          "gstType": "igst",
+          "products": [
+            {
+              "id": "pdf-gs023-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "20510.00",
+              "price": "63.983"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5019 8641 5946",
+          "ewayDate": "09-04-2026",
+          "validDate": "11-04-2026",
+          "driver": "Mani Kandan",
+          "vehicle": "TN28AQ9525",
+          "mobile": "+919345062272"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 20510,
+              "price": 63.983,
+              "amount": 1312291.3299999998,
+              "gstMode": "excluded"
+            }
+          ],
+          "taxable": 1312291.3299999998,
+          "gst": 236212.43939999997,
+          "roundOff": 0.23,
+          "total": 1548504
+        },
+        "savedAt": "09-04-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-gs022-aaradhana-traders",
+        "invoiceNo": "#GS-022-KRI",
+        "invoice": {
+          "sellerName": "Golden Steel",
+          "sellerAddressLines": [
+            "#343A, Nethaji Road, Krishnagiri",
+            "Tamil Nadu - India. - 635001"
+          ],
+          "sellerGstin": "33CJHPM0971N1ZV",
+          "sellerPhone": "+91 7418287561",
+          "invoiceNo": "#GS-022-KRI",
+          "invoiceDate": "08-04-2026",
+          "toName": "AARADHANA TRADERS",
+          "toAddress": "#1/239C Santhur X Road, Pochampalli, Kattagaram, Krishnagiri, Tamil Nadu-635206",
+          "toGstin": "33CMJPV5578B1ZQ",
+          "toPhone": "+91 9715141819",
+          "gstMode": "excluded",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "pdf-gs022-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "5010.00",
+              "price": "63.30"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5719 8545 6794",
+          "ewayDate": "08-04-2026",
+          "validDate": "09-04-2026",
+          "driver": "",
+          "vehicle": "TN65AL2539",
+          "mobile": ""
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 5010,
+              "price": 63.3,
+              "amount": 317133,
+              "gstMode": "excluded"
+            }
+          ],
+          "taxable": 317133,
+          "gst": 57083.939999999995,
+          "roundOff": 0.06,
+          "total": 374217
+        },
+        "savedAt": "08-04-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-gs021-prince-mathiyalagan",
+        "invoiceNo": "#GS-021-KRI",
+        "invoice": {
+          "sellerName": "Golden Steel",
+          "sellerAddressLines": [
+            "#343A, Nethaji Road, Krishnagiri",
+            "Tamil Nadu - India. - 635001"
+          ],
+          "sellerGstin": "33CJHPM0971N1ZV",
+          "sellerPhone": "+91 7418287561",
+          "invoiceNo": "#GS-021-KRI",
+          "invoiceDate": "07-04-2026",
+          "toName": "Prince Mathiyalagan -TN29BU9878",
+          "toAddress": "Kambainallur main road, kasappatti (post) morappur, dharmapuri.-635305",
+          "toGstin": "URP",
+          "toPhone": "+919715127410",
+          "gstMode": "excluded",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "pdf-gs021-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "350.00",
+              "price": "59.00"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": false,
+          "eway": "",
+          "ewayDate": "07-04-2026",
+          "validDate": "08-04-2026",
+          "driver": "",
+          "vehicle": "",
+          "mobile": ""
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 350,
+              "price": 59,
+              "amount": 20650,
+              "gstMode": "excluded"
+            }
+          ],
+          "taxable": 20650,
+          "gst": 3717,
+          "roundOff": 0,
+          "total": 24367
+        },
+        "savedAt": "07-04-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-gs020-muniyappan-sevathan",
+        "invoiceNo": "#GS-020-KRI",
+        "invoice": {
+          "sellerName": "Golden Steel",
+          "sellerAddressLines": [
+            "#343A, Nethaji Road, Krishnagiri",
+            "Tamil Nadu - India. - 635001"
+          ],
+          "sellerGstin": "33CJHPM0971N1ZV",
+          "sellerPhone": "+91 7418287561",
+          "invoiceNo": "#GS-020-KRI",
+          "invoiceDate": "07-04-2026",
+          "toName": "Muniyappan Sevathan - TN29BP7081",
+          "toAddress": "#4/64, MOTTAIYAN KOTTAI, Dandukaranahalli, Dharmapuri, 636808 Dandukaranahalli, Tamil Nadu, 635808",
+          "toGstin": "URP",
+          "toPhone": "",
+          "gstMode": "excluded",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "pdf-gs020-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "480.00",
+              "price": "59.00"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": false,
+          "eway": "",
+          "ewayDate": "07-04-2026",
+          "validDate": "08-04-2026",
+          "driver": "",
+          "vehicle": "",
+          "mobile": ""
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 480,
+              "price": 59,
+              "amount": 28320,
+              "gstMode": "excluded"
+            }
+          ],
+          "taxable": 28320,
+          "gst": 5097.599999999999,
+          "roundOff": 0.4,
+          "total": 33418
+        },
+        "savedAt": "07-04-2026",
+        "savedBy": "PDF Import",
+        "savedByRole": "system",
+        "status": "saved"
+      },
+      {
+        "id": "invoice-gs019-raghul-m",
+        "invoiceNo": "#GS-019-KRI",
+        "invoice": {
+          "sellerName": "Golden Steel",
+          "sellerAddressLines": [
+            "#343A, Nethaji Road, Krishnagiri",
+            "Tamil Nadu - India. - 635001"
+          ],
+          "sellerGstin": "33CJHPM0971N1ZV",
+          "sellerPhone": "+91 7418287561",
+          "invoiceNo": "#GS-019-KRI",
+          "invoiceDate": "03-04-2026",
+          "toName": "RAGHUL M",
+          "toAddress": "#5/4A1, Kaikukaran Kottai, Karimangalam, Salem Main Road, Karimangalam, Dharmapuri, Tamil Nadu, 635111",
+          "toGstin": "URP",
+          "toPhone": "+91 8754417143",
+          "gstMode": "excluded",
+          "gstType": "split",
+          "products": [
+            {
+              "id": "pdf-gs019-steeltube",
+              "productKey": "steel-tube-galvanize",
+              "hsn": "73061911",
+              "qty": "4950.00",
+              "price": "58.00"
+            }
+          ],
+          "transportCharge": "0",
+          "transportChargeMode": "excluded",
+          "loadingCharge": "0",
+          "loadingChargeMode": "excluded",
+          "hasEway": true,
+          "eway": "5619 8336 4199",
+          "ewayDate": "03-04-2026",
+          "validDate": "04-04-2026",
+          "driver": "SIVA",
+          "vehicle": "TN29BB2739",
+          "mobile": "+91 9865519551"
+        },
+        "totals": {
+          "rows": [
+            {
+              "index": 1,
+              "kind": "product",
+              "description": "SteelTube",
+              "hsn": "73061911",
+              "qty": 4950,
+              "price": 58,
+              "amount": 287100,
+              "gstMode": "excluded"
+            }
+          ],
+          "taxable": 287100,
+          "gst": 51678,
+          "roundOff": 0,
+          "total": 338778
+        },
+        "savedAt": "14-07-2026",
+        "savedBy": "Syed Khalid Ahamed",
+        "savedByRole": "admin",
+        "status": "saved"
+      }
+    ],
+    "managerNonGstSequence": 2,
+    "managerWorkbook": {
+      "customers": [
+        {
+          "id": "customer-shanawaz",
+          "name": "Shanawaz",
+          "phone": "",
+          "address": ""
+        },
+        {
+          "id": "customer-fayaz",
+          "name": "Fayaz",
+          "phone": "",
+          "address": ""
+        },
+        {
+          "id": "customer-ajju",
+          "name": "Ajju",
+          "phone": "",
+          "address": ""
+        },
+        {
+          "id": "customer-karimangalam",
+          "name": "Karimangalam",
+          "phone": "",
+          "address": ""
+        },
+        {
+          "id": "customer-ali",
+          "name": "Ali",
+          "phone": "",
+          "address": ""
+        },
+        {
+          "id": "customer-suhail-mama",
+          "name": "Suhail Mama",
+          "phone": "",
+          "address": ""
+        },
+        {
+          "id": "customer-big-water-cans",
+          "name": "Big Water Cans",
+          "phone": "",
+          "address": ""
+        },
+        {
+          "id": "customer-saqib",
+          "name": "Saqib",
+          "phone": "",
+          "address": ""
+        }
+      ],
+      "bills": [],
+      "stockEntries": [
+        {
+          "id": "opening-white",
+          "date": "01-04-2026",
+          "category": "White",
+          "qty": 5307,
+          "unitCost": 72.75
+        },
+        {
+          "id": "opening-ms-black",
+          "date": "01-04-2026",
+          "category": "MS Black",
+          "qty": 4229,
+          "unitCost": 64.6
+        },
+        {
+          "id": "opening-flat-patta",
+          "date": "01-04-2026",
+          "category": "Flat/Patta",
+          "qty": 7045,
+          "unitCost": 62
+        }
+      ],
+      "sales": [],
+      "credits": [
+        {
+          "id": "credit-1784818483977-9e7224f155dde",
+          "date": "23-07-2026",
+          "customer": "Saqib credit",
+          "creditAmount": 194500,
+          "paidAmount": 0
+        },
+        {
+          "id": "credit-1784818427798-e2ff9f4297aca",
+          "date": "23-07-2026",
+          "customer": "In hand cash",
+          "creditAmount": 51000,
+          "paidAmount": 0
+        },
+        {
+          "id": "credit-1784818397917-716ac15b8e5d78",
+          "date": "23-07-2026",
+          "customer": "In bank kvb",
+          "creditAmount": 53000,
+          "paidAmount": 0
+        },
+        {
+          "id": "credit-1784818384603-03297ea54b45bac",
+          "date": "23-07-2026",
+          "customer": "In bank union",
+          "creditAmount": 593000,
+          "paidAmount": 0
+        },
+        {
+          "id": "credit-1784818366920-83ca14c8078538",
+          "date": "23-07-2026",
+          "customer": "Jiju",
+          "creditAmount": 6000,
+          "paidAmount": 0
+        },
+        {
+          "id": "credit-1784818268961-1e7040a7e5c641",
+          "date": "23-07-2026",
+          "customer": "Vasanth Kumar",
+          "creditAmount": 5000,
+          "paidAmount": 0
+        },
+        {
+          "id": "credit-shanawaz",
+          "date": "25-05-2026",
+          "customer": "Shanawaz",
+          "creditAmount": 17300,
+          "paidAmount": 0
+        },
+        {
+          "id": "credit-fayaz",
+          "date": "26-05-2026",
+          "customer": "Prince",
+          "creditAmount": 13780,
+          "paidAmount": 0
+        },
+        {
+          "id": "credit-ajju",
+          "date": "27-05-2026",
+          "customer": "Ajju",
+          "creditAmount": 2950,
+          "paidAmount": 0
+        },
+        {
+          "id": "credit-karimangalam",
+          "date": "28-05-2026",
+          "customer": "Wazir",
+          "creditAmount": 3500,
+          "paidAmount": 0
+        }
+      ],
+      "cashbook": [],
+      "investments": [
+        {
+          "id": "investment-1784818503373-e9a514996d36a8",
+          "date": "23-07-2026",
+          "partner": "Saqib",
+          "amount": 320000,
+          "mode": "Cash",
+          "remarks": "",
+          "status": "Active"
+        },
+        {
+          "id": "investment-shafi",
+          "date": "07-05-2026",
+          "partner": "Shafi",
+          "amount": 1170000,
+          "mode": "Cash",
+          "remarks": "Capital investment",
+          "status": "Active"
+        },
+        {
+          "id": "investment-suhail",
+          "date": "07-05-2026",
+          "partner": "Suhail",
+          "amount": 482000,
+          "mode": "Cash",
+          "remarks": "Capital investment",
+          "status": "Active"
+        }
+      ],
+      "loans": [],
+      "expenses": [],
+      "profitSettings": {
+        "otherProfit": 0,
+        "totalExpense": 0
+      }
+    }
+  }
+}

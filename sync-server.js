@@ -10,6 +10,15 @@ const DATA_DIR = process.env.SYNC_DATA_DIR
 const DB_FILE = path.join(DATA_DIR, 'sync-db.json');
 const SQLITE_DB_FILE = path.join(DATA_DIR, 'lucky-traders-sync.sqlite');
 const FILE_DIR = path.join(DATA_DIR, 'files');
+const SEED_DATA_DIR = process.env.SYNC_SEED_DATA_DIR
+  ? path.resolve(process.env.SYNC_SEED_DATA_DIR)
+  : path.join(__dirname, 'sync-data');
+const SEED_DB_FILE = process.env.SYNC_SEED_DB_FILE
+  ? path.resolve(process.env.SYNC_SEED_DB_FILE)
+  : path.join(SEED_DATA_DIR, 'sync-db.json');
+const SEED_FILE_DIR = process.env.SYNC_SEED_FILE_DIR
+  ? path.resolve(process.env.SYNC_SEED_FILE_DIR)
+  : path.join(SEED_DATA_DIR, 'files');
 const MAX_BODY_BYTES = 80 * 1024 * 1024;
 const SYNC_API_KEY = String(process.env.LUCKY_TRADERS_SYNC_API_KEY || process.env.SYNC_API_KEY || '').trim();
 const REQUESTED_STORAGE = String(process.env.SYNC_STORAGE || '').trim().toLowerCase();
@@ -34,6 +43,33 @@ function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
+}
+
+function getExistingSeedDbFile() {
+  const candidates = [DB_FILE, SEED_DB_FILE].filter((filePath, index, all) => filePath && all.indexOf(filePath) === index);
+  for (const filePath of candidates) {
+    if (!fs.existsSync(filePath)) continue;
+    try {
+      const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (parsed.data || Number(parsed.revision) > 0) return filePath;
+    } catch {
+      continue;
+    }
+  }
+  return '';
+}
+
+function getExistingSeedFileDir() {
+  const candidates = [FILE_DIR, SEED_FILE_DIR].filter((dirPath, index, all) => dirPath && all.indexOf(dirPath) === index);
+  for (const dirPath of candidates) {
+    if (!fs.existsSync(dirPath)) continue;
+    try {
+      if (fs.readdirSync(dirPath).some((fileName) => fileName.endsWith('.json'))) return dirPath;
+    } catch {
+      continue;
+    }
+  }
+  return '';
 }
 
 async function initializeStorage() {
@@ -93,13 +129,16 @@ async function initializeStorage() {
 }
 
 function migrateJsonStoreToSqlite() {
-  if (!sqliteDb || !fs.existsSync(DB_FILE)) return;
+  if (!sqliteDb) return;
 
   const existing = readSqliteStore();
   if (existing.data || existing.revision > 0) return;
 
   try {
-    const parsed = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+    const seedDbFile = getExistingSeedDbFile();
+    if (!seedDbFile) return;
+
+    const parsed = JSON.parse(fs.readFileSync(seedDbFile, 'utf8'));
     const migratedStore = {
       ...makeEmptyStore(),
       ...parsed,
@@ -108,7 +147,7 @@ function migrateJsonStoreToSqlite() {
     };
     if (migratedStore.data || migratedStore.revision > 0) {
       writeSqliteStore(migratedStore);
-      console.log(`Migrated JSON sync store into SQLite: ${SQLITE_DB_FILE}`);
+      console.log(`Migrated JSON sync store into SQLite from ${seedDbFile}: ${SQLITE_DB_FILE}`);
     }
   } catch (error) {
     console.warn('Unable to migrate JSON sync store into SQLite:', error.message);
@@ -116,16 +155,19 @@ function migrateJsonStoreToSqlite() {
 }
 
 function migrateFileStoreToSqlite() {
-  if (!sqliteDb || !fs.existsSync(FILE_DIR)) return;
+  if (!sqliteDb) return;
 
   try {
+    const seedFileDir = getExistingSeedFileDir();
+    if (!seedFileDir) return;
+
     const existingCount = sqliteDb.prepare('SELECT COUNT(*) AS count FROM sync_files').get().count;
     if (existingCount > 0) return;
 
-    const metadataFiles = fs.readdirSync(FILE_DIR).filter((fileName) => fileName.endsWith('.json'));
+    const metadataFiles = fs.readdirSync(seedFileDir).filter((fileName) => fileName.endsWith('.json'));
     metadataFiles.forEach((metadataFileName) => {
-      const metaPath = path.join(FILE_DIR, metadataFileName);
-      const dataPath = path.join(FILE_DIR, metadataFileName.replace(/\.json$/, '.bin'));
+      const metaPath = path.join(seedFileDir, metadataFileName);
+      const dataPath = path.join(seedFileDir, metadataFileName.replace(/\.json$/, '.bin'));
       if (!fs.existsSync(dataPath)) return;
 
       const metadata = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
@@ -291,13 +333,16 @@ function getPostgresSslConfig(databaseUrl) {
 }
 
 async function migrateJsonStoreToPostgres() {
-  if (!postgresPool || !fs.existsSync(DB_FILE)) return;
+  if (!postgresPool) return;
 
   const existing = await readPostgresStore();
   if (existing.data || existing.revision > 0) return;
 
   try {
-    const parsed = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+    const seedDbFile = getExistingSeedDbFile();
+    if (!seedDbFile) return;
+
+    const parsed = JSON.parse(fs.readFileSync(seedDbFile, 'utf8'));
     const migratedStore = {
       ...makeEmptyStore(),
       ...parsed,
@@ -306,7 +351,7 @@ async function migrateJsonStoreToPostgres() {
     };
     if (migratedStore.data || migratedStore.revision > 0) {
       await writePostgresStore(migratedStore);
-      console.log('Migrated JSON sync store into PostgreSQL.');
+      console.log(`Migrated JSON sync store into PostgreSQL from ${seedDbFile}.`);
     }
   } catch (error) {
     console.warn('Unable to migrate JSON sync store into PostgreSQL:', error.message);
@@ -314,16 +359,19 @@ async function migrateJsonStoreToPostgres() {
 }
 
 async function migrateFileStoreToPostgres() {
-  if (!postgresPool || !fs.existsSync(FILE_DIR)) return;
+  if (!postgresPool) return;
 
   try {
+    const seedFileDir = getExistingSeedFileDir();
+    if (!seedFileDir) return;
+
     const existingCount = Number((await postgresPool.query('SELECT COUNT(*) AS count FROM sync_files')).rows[0].count) || 0;
     if (existingCount > 0) return;
 
-    const metadataFiles = fs.readdirSync(FILE_DIR).filter((fileName) => fileName.endsWith('.json'));
+    const metadataFiles = fs.readdirSync(seedFileDir).filter((fileName) => fileName.endsWith('.json'));
     for (const metadataFileName of metadataFiles) {
-      const metaPath = path.join(FILE_DIR, metadataFileName);
-      const dataPath = path.join(FILE_DIR, metadataFileName.replace(/\.json$/, '.bin'));
+      const metaPath = path.join(seedFileDir, metadataFileName);
+      const dataPath = path.join(seedFileDir, metadataFileName.replace(/\.json$/, '.bin'));
       if (!fs.existsSync(dataPath)) continue;
 
       const metadata = JSON.parse(fs.readFileSync(metaPath, 'utf8'));

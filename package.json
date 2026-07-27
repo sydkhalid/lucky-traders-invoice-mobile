@@ -11,6 +11,7 @@
     "desktop:export": "expo export --platform web --output-dir dist",
     "desktop:start": "npm run desktop:export && node scripts/start-desktop.cjs",
     "desktop:build": "npm run desktop:export && node scripts/build-desktop.cjs",
+    "seed:postgres": "node scripts/seed-postgres-sync.cjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
