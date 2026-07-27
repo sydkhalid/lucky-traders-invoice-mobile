@@ -92,6 +92,7 @@ export type NonGstBillRecord = {
   loadingCharge: number;
   note: string;
   total: number;
+  paidAmount: number;
 };
 
 export type CustomerCreditEntry = {
@@ -298,6 +299,7 @@ export function ManagerNonGstBillScreen({
   const [items, setItems] = useState<NonGstItem[]>([emptyItem()]);
   const [transportCharge, setTransportCharge] = useState('');
   const [loadingCharge, setLoadingCharge] = useState('');
+  const [paidAmount, setPaidAmount] = useState('');
   const [note, setNote] = useState('');
   const [localWorkbook, setLocalWorkbook] = useState<ManagerWorkbook>(createDefaultWorkbook);
   const [localWorkbookReady, setLocalWorkbookReady] = useState(false);
@@ -460,6 +462,8 @@ export function ManagerNonGstBillScreen({
       grandTotal: Math.round(itemTotal + extras),
     };
   }, [items, loadingCharge, transportCharge]);
+  const paidPreview = Math.max(0, parseAmount(paidAmount));
+  const balancePreview = Math.max(0, totals.grandTotal - paidPreview);
   const workbookTotals = useMemo(() => buildWorkbookTotals(workbook, summaries), [summaries, workbook]);
   const pnl = useMemo(() => buildProfitAndLoss(workbook, workbookTotals), [workbook, workbookTotals]);
 
@@ -513,6 +517,7 @@ export function ManagerNonGstBillScreen({
     setItems([emptyItem()]);
     setTransportCharge('');
     setLoadingCharge('');
+    setPaidAmount('');
     setNote('');
   }
 
@@ -556,6 +561,7 @@ export function ManagerNonGstBillScreen({
     const billTotal = Math.round(
       billItems.reduce((sum, item) => sum + item.qty * item.rate, 0) + parseAmount(transportCharge) + parseAmount(loadingCharge),
     );
+    const billPaidAmount = Math.min(billTotal, Math.max(0, parseAmount(paidAmount)));
 
     updateWorkbook((current) => {
       const originalBillNo = editingBillOriginalNo || billNo;
@@ -575,6 +581,7 @@ export function ManagerNonGstBillScreen({
         loadingCharge: parseAmount(loadingCharge),
         note: note.trim(),
         total: billTotal,
+        paidAmount: billPaidAmount,
       };
 
       return {
@@ -615,6 +622,7 @@ export function ManagerNonGstBillScreen({
     })) : [emptyItem()]);
     setTransportCharge(record.transportCharge ? formatFormNumber(record.transportCharge) : '');
     setLoadingCharge(record.loadingCharge ? formatFormNumber(record.loadingCharge) : '');
+    setPaidAmount(record.paidAmount ? formatFormNumber(record.paidAmount) : '');
     setNote(record.note);
     setBillMode('form');
   }
@@ -779,6 +787,14 @@ export function ManagerNonGstBillScreen({
     }
     if (!hasItem) {
       Alert.alert('Item required', 'Enter at least one item with quantity and rate.');
+      return false;
+    }
+    if (parseAmount(paidAmount) > totals.grandTotal) {
+      Alert.alert('Paid amount too high', `This bill total is ${money(totals.grandTotal)}. Paid amount cannot be more than bill total.`);
+      return false;
+    }
+    if (parseAmount(paidAmount) < 0) {
+      Alert.alert('Paid amount invalid', 'Paid amount cannot be negative.');
       return false;
     }
     return true;
@@ -1251,6 +1267,8 @@ export function ManagerNonGstBillScreen({
               <tr><td>Item Total</td><td class="right">${money(totals.itemTotal)}</td></tr>
               ${extraRows}
               <tr class="grand"><td>Grand Total</td><td class="right">${money(totals.grandTotal)}</td></tr>
+              <tr><td>Paid Amount</td><td class="right">${money(paidPreview)}</td></tr>
+              <tr><td>Balance Due</td><td class="right strong">${money(balancePreview)}</td></tr>
             </table>
             <div class="note"><b>Note:</b> ${escapeHtml(note || 'Thank you for your business.')}</div>
             <div class="footer">
@@ -1364,6 +1382,16 @@ export function ManagerNonGstBillScreen({
               <View style={[styles.finalBillSummaryLine, styles.finalBillGrandLine]}>
                 <Text style={[styles.finalBillSummaryLabel, styles.finalBillGrandText]}>Grand Total:</Text>
                 <Text style={[styles.finalBillSummaryValue, styles.finalBillGrandText]}>{money(totals.grandTotal)}</Text>
+              </View>
+              <View style={styles.finalBillSummaryLine}>
+                <Text style={styles.finalBillSummaryLabel}>Paid Amount:</Text>
+                <Text style={styles.finalBillSummaryValue}>{money(paidPreview)}</Text>
+              </View>
+              <View style={styles.finalBillSummaryLine}>
+                <Text style={styles.finalBillSummaryLabel}>Balance Due:</Text>
+                <Text style={[styles.finalBillSummaryValue, balancePreview > 0 && styles.reportRowAmountRed]}>
+                  {money(balancePreview)}
+                </Text>
               </View>
             </View>
 
@@ -1514,6 +1542,7 @@ export function ManagerNonGstBillScreen({
             {billRecords.map((record) => {
               const totalQty = record.items.reduce((sum, item) => sum + item.qty, 0);
               const itemLabel = record.items.length === 1 ? 'item' : 'items';
+              const balance = getBillBalance(record);
               const productLine = record.items
                 .map((item) => `${item.product} ${numberFormat(item.qty)} Kg`)
                 .join(' | ');
@@ -1527,13 +1556,18 @@ export function ManagerNonGstBillScreen({
                         {record.customer || 'Walk-in customer'}
                       </Text>
                       <Text style={styles.savedInvoiceMeta}>
-                        {record.date} | {record.items.length} {itemLabel} | {numberFormat(totalQty)} Kg
+                        {record.date} | {record.items.length} {itemLabel} | {numberFormat(totalQty)} Kg | Paid {money(record.paidAmount || 0)}
                       </Text>
                     </View>
                     <View style={styles.savedInvoiceTotalBadge}>
-                      <Text style={styles.savedInvoiceStatus}>TOTAL</Text>
-                      <Text style={styles.savedInvoiceTotal} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
-                        {money(record.total)}
+                      <Text style={styles.savedInvoiceStatus}>{balance > 0 ? 'BALANCE' : 'PAID'}</Text>
+                      <Text
+                        style={[styles.savedInvoiceTotal, balance > 0 ? styles.reportRowAmountRed : styles.statValueGreen]}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                        minimumFontScale={0.75}
+                      >
+                        {money(balance > 0 ? balance : record.total)}
                       </Text>
                     </View>
                   </View>
@@ -1628,6 +1662,7 @@ export function ManagerNonGstBillScreen({
         <Card title="Bill total" icon="calculator-variant-outline">
           <Field label="Transport Charge" value={transportCharge} onChangeText={setTransportCharge} keyboardType="decimal-pad" />
           <Field label="Loading Charge" value={loadingCharge} onChangeText={setLoadingCharge} keyboardType="decimal-pad" />
+          <Field label="Paid Amount" value={paidAmount} onChangeText={setPaidAmount} keyboardType="decimal-pad" />
           <Field label="Note" value={note} onChangeText={setNote} multiline />
           <View style={styles.statGrid}>
             <View style={styles.statCard}>
@@ -1637,6 +1672,12 @@ export function ManagerNonGstBillScreen({
             <View style={styles.statCard}>
               <Text style={styles.statLabel}>Grand Total</Text>
               <Text style={[styles.statValue, styles.statValueGreen]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}>{money(totals.grandTotal)}</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>Remaining</Text>
+              <Text style={[styles.statValue, balancePreview > 0 && styles.statValueRed]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}>
+                {money(balancePreview)}
+              </Text>
             </View>
           </View>
         </Card>
@@ -1973,10 +2014,28 @@ export function ManagerNonGstBillScreen({
               <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}>{money(workbookTotals.creditAmount)}</Text>
             </View>
             <View style={styles.statCard}>
+              <Text style={styles.statLabel}>Received</Text>
+              <Text style={[styles.statValue, styles.statValueGreen]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}>{money(workbookTotals.creditPaid)}</Text>
+            </View>
+            <View style={styles.statCard}>
               <Text style={styles.statLabel}>Pending Balance</Text>
               <Text style={[styles.statValue, workbookTotals.creditBalance > 0 && styles.statValueRed]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}>{money(workbookTotals.creditBalance)}</Text>
             </View>
           </View>
+          {workbookTotals.billCreditBalance > 0 ? (
+            <View style={styles.reportList}>
+              <Text style={styles.listToolbarTitle}>Bill pending balances</Text>
+              {billRecords.filter((bill) => getBillBalance(bill) > 0).map((bill) => (
+                <LedgerRow
+                  key={bill.id}
+                  title={`${bill.customer || 'Walk-in customer'} - ${bill.billNo}`}
+                  meta={`${bill.date} | Total ${money(bill.total)} | Paid ${money(bill.paidAmount || 0)}`}
+                  amount={getBillBalance(bill)}
+                  danger
+                />
+              ))}
+            </View>
+          ) : null}
           {creditRecords.length ? (
             <>
               <View style={styles.listToolbar}>
@@ -2940,6 +2999,7 @@ function normalizeManagerBills(records: unknown[], salesRows: SaleEntry[]) {
       const loadingCharge = Number(record.loadingCharge) || 0;
       const computedTotal = Math.round(items.reduce((sum, item) => sum + item.qty * item.rate, 0) + transportCharge + loadingCharge);
       const savedTotal = Number(record.total);
+      const total = Number.isFinite(savedTotal) ? savedTotal : computedTotal;
 
       return {
         id: typeof record.id === 'string' && record.id.trim() ? record.id : `manager-bill-${billNo}`,
@@ -2953,7 +3013,8 @@ function normalizeManagerBills(records: unknown[], salesRows: SaleEntry[]) {
         transportCharge,
         loadingCharge,
         note: typeof record.note === 'string' ? record.note.trim() : '',
-        total: Number.isFinite(savedTotal) ? savedTotal : computedTotal,
+        total,
+        paidAmount: Math.min(total, Math.max(0, Number(record.paidAmount) || 0)),
       };
     })
     .filter((record): record is NonGstBillRecord => Boolean(record));
@@ -2992,8 +3053,13 @@ function buildManagerBillsFromSales(salesRows: SaleEntry[]) {
       loadingCharge: 0,
       note: '',
       total: Math.round(items.reduce((sum, item) => sum + item.qty * item.rate, 0)),
+      paidAmount: 0,
     };
   });
+}
+
+function getBillBalance(record: NonGstBillRecord) {
+  return Math.max(0, record.total - (record.paidAmount || 0));
 }
 
 function sortManagerBills(records: NonGstBillRecord[]) {
@@ -3142,8 +3208,12 @@ function buildWorkbookTotals(workbook: ManagerWorkbook, summaries: ReturnType<ty
   const currentStockValue = summaries.reduce((sum, item) => sum + item.currentStockValue, 0);
   const salesAmount = summaries.reduce((sum, item) => sum + item.salesAmount, 0);
   const profit = summaries.reduce((sum, item) => sum + item.profit, 0);
-  const creditAmount = workbook.credits.reduce((sum, entry) => sum + entry.creditAmount, 0);
-  const creditPaid = workbook.credits.reduce((sum, entry) => sum + entry.paidAmount, 0);
+  const billCreditAmount = workbook.bills.reduce((sum, entry) => sum + entry.total, 0);
+  const billCreditPaid = workbook.bills.reduce((sum, entry) => sum + (entry.paidAmount || 0), 0);
+  const manualCreditAmount = workbook.credits.reduce((sum, entry) => sum + entry.creditAmount, 0);
+  const manualCreditPaid = workbook.credits.reduce((sum, entry) => sum + entry.paidAmount, 0);
+  const creditAmount = billCreditAmount + manualCreditAmount;
+  const creditPaid = billCreditPaid + manualCreditPaid;
   const cashBalance = workbook.cashbook.reduce((sum, entry) => sum + entry.cashCredit - entry.cashDebit, 0);
   const bankBalance = workbook.cashbook.reduce((sum, entry) => sum + entry.bankCredit - entry.bankDebit, 0);
   const totalInvestment = workbook.investments
@@ -3162,6 +3232,12 @@ function buildWorkbookTotals(workbook: ManagerWorkbook, summaries: ReturnType<ty
     currentStockValue,
     salesAmount,
     profit,
+    billCreditAmount,
+    billCreditPaid,
+    billCreditBalance: billCreditAmount - billCreditPaid,
+    manualCreditAmount,
+    manualCreditPaid,
+    manualCreditBalance: manualCreditAmount - manualCreditPaid,
     creditAmount,
     creditPaid,
     creditBalance: creditAmount - creditPaid,
