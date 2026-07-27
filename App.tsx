@@ -121,6 +121,7 @@ const emptySupplierForm: SupplierForm = {
 };
 
 const NEW_DEVICE_SERVER_PULL_PENDING_KEY = 'lucky-traders.newDeviceServerPullPending.v1';
+const SERVER_DATABASE_ONLY = true;
 
 const emptyProfileForm: ProfileForm = {
   name: '',
@@ -136,71 +137,6 @@ function parseStoredStringList(value: string | null) {
   } catch {
     return [];
   }
-}
-
-const defaultSavedInvoices = sortSavedInvoicesByInvoiceDate(seedInvoiceDocuments);
-const defaultNextInvoiceSequence = getNextInvoiceSequenceFromInvoices(defaultSavedInvoices, 1);
-const defaultSeedUserTableJson = JSON.stringify(createSeedUserTable());
-const defaultManagerWorkbookJson = JSON.stringify(createDefaultManagerWorkbook());
-
-function hasLocalDataBeyondSeed(snapshot: SyncDatabaseSnapshot) {
-  return (
-    JSON.stringify(normalizeUserTable(snapshot.userTable)) !== defaultSeedUserTableJson ||
-    recordsChangedFromSeed(snapshot.products, seedProductDocuments, 'key') ||
-    clientsChangedFromSeed(snapshot.clients) ||
-    recordsChangedFromSeed(snapshot.suppliers, seedSupplierDocuments, 'id') ||
-    recordsChangedFromSeed(snapshot.purchases, seedPurchaseDocuments, 'id') ||
-    recordsChangedFromSeed(snapshot.employees, seedEmployeeDocuments, 'id') ||
-    recordsChangedFromSeed(snapshot.salaries, seedSalaryDocuments, 'id') ||
-    recordsChangedFromSeed(snapshot.expenses, seedExpenseDocuments, 'id') ||
-    recordsChangedFromSeed(snapshot.payments, seedPaymentDocuments, 'id') ||
-    recordsChangedFromSeed(snapshot.supplierPayments, seedSupplierPaymentDocuments, 'id') ||
-    recordsChangedFromSeed(snapshot.savedInvoices, defaultSavedInvoices, 'id') ||
-    Number(snapshot.nextInvoiceSequence) > defaultNextInvoiceSequence ||
-    Number(snapshot.managerNonGstSequence) > 1 ||
-    JSON.stringify(normalizeManagerWorkbook(snapshot.managerWorkbook)) !== defaultManagerWorkbookJson
-  );
-}
-
-function recordsChangedFromSeed<T extends object>(records: T[], seedRecords: T[], keyName: keyof T) {
-  if (!Array.isArray(records)) return seedRecords.length > 0;
-
-  const seedByKey = new Map(seedRecords.map((record) => [String(record[keyName] || ''), JSON.stringify(record)]));
-  const seenKeys = new Set<string>();
-
-  for (const record of records) {
-    const key = String(record[keyName] || '');
-    seenKeys.add(key);
-    if (!seedByKey.has(key)) return true;
-    if (JSON.stringify(record) !== seedByKey.get(key)) return true;
-  }
-
-  return seedRecords.some((record) => !seenKeys.has(String(record[keyName] || '')));
-}
-
-function clientsChangedFromSeed(clients: ClientDocument[]) {
-  if (!Array.isArray(clients)) return seedClientDocuments.length > 0;
-
-  const seedById = new Map(seedClientDocuments.map((client) => [client.id, JSON.stringify(client)]));
-  const seenSeedIds = new Set<string>();
-
-  for (const client of clients) {
-    if (seedById.has(client.id)) {
-      seenSeedIds.add(client.id);
-      if (JSON.stringify(client) !== seedById.get(client.id)) return true;
-      continue;
-    }
-
-    const invoiceImportOnly =
-      client.createdBy === 'Invoice Import' &&
-      client.createdByRole === 'system' &&
-      !client.updatedBy &&
-      !client.updatedByRole;
-
-    if (!invoiceImportOnly) return true;
-  }
-
-  return seedClientDocuments.some((client) => !seenSeedIds.has(client.id));
 }
 
 function normalizeClientName(value: string) {
@@ -599,10 +535,11 @@ export default function App() {
     syncApplyingRemoteRef.current = true;
     const syncedInvoices = sortSavedInvoicesByInvoiceDate(Array.isArray(snapshot.savedInvoices) ? snapshot.savedInvoices : []);
     const syncedNextSequence = getNextInvoiceSequenceFromInvoices(syncedInvoices, Math.max(1, Number(snapshot.nextInvoiceSequence) || 1));
+    const syncedProducts = Array.isArray(snapshot.products) ? snapshot.products : [];
     setUserTable(normalizeUserTable(snapshot.userTable));
     setClients(dedupeClientsByIdentity(Array.isArray(snapshot.clients) ? snapshot.clients : []));
     setSuppliers(Array.isArray(snapshot.suppliers) ? snapshot.suppliers : []);
-    setProducts(Array.isArray(snapshot.products) && snapshot.products.length > 0 ? snapshot.products : seedProductDocuments);
+    setProducts(syncedProducts);
     setPurchases(Array.isArray(snapshot.purchases) ? snapshot.purchases : []);
     setEmployees(Array.isArray(snapshot.employees) ? snapshot.employees : []);
     setSalaries(Array.isArray(snapshot.salaries) ? snapshot.salaries : []);
@@ -612,7 +549,7 @@ export default function App() {
     setNextInvoiceSequence(syncedNextSequence);
     setSavedInvoices(syncedInvoices);
     if (!editingInvoiceId) {
-      setInvoice(makeInvoiceState(formatInvoiceNumber(syncedNextSequence), Array.isArray(snapshot.products) && snapshot.products.length > 0 ? snapshot.products : seedProductDocuments));
+      setInvoice(makeInvoiceState(formatInvoiceNumber(syncedNextSequence), syncedProducts));
     }
     setManagerNonGstSequence(Math.max(1, Number(snapshot.managerNonGstSequence) || 1));
     setManagerWorkbook(normalizeManagerWorkbook(snapshot.managerWorkbook));
@@ -639,6 +576,11 @@ export default function App() {
   }
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setUserDatabaseHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadUsers() {
@@ -661,13 +603,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!userDatabaseHydrated) return;
+    if (SERVER_DATABASE_ONLY || !userDatabaseHydrated) return;
     AsyncStorage.setItem(USER_TABLE_STORAGE_KEY, JSON.stringify(userTable)).catch((error) => {
       console.warn('Unable to save user database', error);
     });
   }, [userDatabaseHydrated, userTable]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setClientsHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadClients() {
@@ -693,13 +640,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!clientsHydrated) return;
+    if (SERVER_DATABASE_ONLY || !clientsHydrated) return;
     AsyncStorage.setItem(CLIENT_STORAGE_KEY, JSON.stringify(clients)).catch((error) => {
       console.warn('Unable to save client database', error);
     });
   }, [clients, clientsHydrated]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setSuppliersHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadSuppliers() {
@@ -725,13 +677,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!suppliersHydrated) return;
+    if (SERVER_DATABASE_ONLY || !suppliersHydrated) return;
     AsyncStorage.setItem(SUPPLIER_STORAGE_KEY, JSON.stringify(suppliers)).catch((error) => {
       console.warn('Unable to save supplier database', error);
     });
   }, [suppliers, suppliersHydrated]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setProductsHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadProducts() {
@@ -757,13 +714,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!productsHydrated) return;
+    if (SERVER_DATABASE_ONLY || !productsHydrated) return;
     AsyncStorage.setItem(PRODUCT_STORAGE_KEY, JSON.stringify(products)).catch((error) => {
       console.warn('Unable to save product master', error);
     });
   }, [products, productsHydrated]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setPurchasesHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadPurchases() {
@@ -789,13 +751,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!purchasesHydrated) return;
+    if (SERVER_DATABASE_ONLY || !purchasesHydrated) return;
     AsyncStorage.setItem(PURCHASE_TABLE_STORAGE_KEY, JSON.stringify(purchases)).catch((error) => {
       console.warn('Unable to save purchase database', error);
     });
   }, [purchases, purchasesHydrated]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setEmployeesHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadEmployees() {
@@ -821,13 +788,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!employeesHydrated) return;
+    if (SERVER_DATABASE_ONLY || !employeesHydrated) return;
     AsyncStorage.setItem(EMPLOYEE_STORAGE_KEY, JSON.stringify(employees)).catch((error) => {
       console.warn('Unable to save employee database', error);
     });
   }, [employees, employeesHydrated]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setSalariesHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadSalaries() {
@@ -853,13 +825,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!salariesHydrated) return;
+    if (SERVER_DATABASE_ONLY || !salariesHydrated) return;
     AsyncStorage.setItem(SALARY_STORAGE_KEY, JSON.stringify(salaries)).catch((error) => {
       console.warn('Unable to save salary database', error);
     });
   }, [salaries, salariesHydrated]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setExpensesHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadExpenses() {
@@ -885,13 +862,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!expensesHydrated) return;
+    if (SERVER_DATABASE_ONLY || !expensesHydrated) return;
     AsyncStorage.setItem(EXPENSE_STORAGE_KEY, JSON.stringify(expenses)).catch((error) => {
       console.warn('Unable to save expense database', error);
     });
   }, [expenses, expensesHydrated]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setPaymentsHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadPayments() {
@@ -917,13 +899,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!paymentsHydrated) return;
+    if (SERVER_DATABASE_ONLY || !paymentsHydrated) return;
     AsyncStorage.setItem(PAYMENT_STORAGE_KEY, JSON.stringify(payments)).catch((error) => {
       console.warn('Unable to save payment database', error);
     });
   }, [payments, paymentsHydrated]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setSupplierPaymentsHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadSupplierPayments() {
@@ -949,13 +936,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!supplierPaymentsHydrated) return;
+    if (SERVER_DATABASE_ONLY || !supplierPaymentsHydrated) return;
     AsyncStorage.setItem(SUPPLIER_PAYMENT_STORAGE_KEY, JSON.stringify(supplierPayments)).catch((error) => {
       console.warn('Unable to save supplier payment database', error);
     });
   }, [supplierPayments, supplierPaymentsHydrated]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setInvoiceDatabaseHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadInvoiceDatabase() {
@@ -1015,7 +1007,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!invoiceDatabaseHydrated) return;
+    if (SERVER_DATABASE_ONLY || !invoiceDatabaseHydrated) return;
     Promise.all([
       AsyncStorage.setItem(INVOICE_SEQUENCE_STORAGE_KEY, String(nextInvoiceSequence)),
       AsyncStorage.setItem(INVOICE_TABLE_STORAGE_KEY, JSON.stringify(savedInvoices)),
@@ -1025,6 +1017,11 @@ export default function App() {
   }, [invoiceDatabaseHydrated, nextInvoiceSequence, savedInvoices]);
 
   useEffect(() => {
+    if (SERVER_DATABASE_ONLY) {
+      setManagerWorkbookHydrated(true);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadManagerWorkbook() {
@@ -1052,7 +1049,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!managerWorkbookHydrated) return;
+    if (SERVER_DATABASE_ONLY || !managerWorkbookHydrated) return;
     Promise.all([
       AsyncStorage.setItem(MANAGER_NON_GST_SEQUENCE_KEY, String(managerNonGstSequence)),
       AsyncStorage.setItem(MANAGER_WORKBOOK_KEY, JSON.stringify(managerWorkbook)),
@@ -1101,22 +1098,9 @@ export default function App() {
           return;
         }
 
-        const localSnapshot = syncSnapshotRef.current || syncSnapshot;
-        if (hasLocalDataBeyondSeed(localSnapshot)) {
-          const response = await publishLocalDataToServer(deviceId, remote.revision);
-          if (cancelled) return;
-          await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
-          setServerDataError('');
-          setSyncStatus('online');
-          setServerDataReady(true);
-          setSyncReady(true);
-          console.warn(`Initialized empty sync server at ${getSyncServerUrl()} with local device data. Revision ${response.revision}.`);
-          return;
-        }
-
         syncDirtyRef.current = false;
         await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
-        setServerDataError('Server has no data yet. If this is the main device, send this device data to start server sync.');
+        setServerDataError('Server database has no data yet. Add or restore data on the server database, then retry.');
         setServerDataReady(false);
         setSyncStatus('offline');
         setSyncReady(false);
@@ -1152,6 +1136,15 @@ export default function App() {
       if (syncApplyingRemoteRef.current || syncPushingRef.current) return;
 
       try {
+        if (syncDirtyRef.current) {
+          syncPushingRef.current = true;
+          const deviceId = syncDeviceId || await getSyncDeviceId();
+          if (!syncDeviceId) setSyncDeviceId(deviceId);
+          await publishLocalDataToServer(deviceId, syncRevisionRef.current);
+          setSyncStatus('online');
+          return;
+        }
+
         const response = await fetchSyncSnapshot();
         if (response.revision > syncRevisionRef.current && response.data) {
           syncRevisionRef.current = response.revision;
@@ -1162,19 +1155,17 @@ export default function App() {
         }
         setSyncStatus('online');
       } catch (error) {
-        console.warn(`Unable to pull common sync from ${getSyncServerUrl()}`, error);
+        console.warn(`Unable to sync server database at ${getSyncServerUrl()}`, error);
         setSyncStatus('offline');
       } finally {
-        if (syncDirtyRef.current) {
-          syncPushingRef.current = false;
-        }
+        syncPushingRef.current = false;
       }
     }, 8000);
 
     return () => {
       clearInterval(timer);
     };
-  }, [syncReady]);
+  }, [syncDeviceId, syncReady]);
 
   useEffect(() => {
     if (!signedInUser) {
@@ -1220,33 +1211,6 @@ export default function App() {
     return response;
   }
 
-  async function sendCurrentDeviceDataFromGate() {
-    if (!localDatabasesHydrated || syncPushingRef.current) return;
-
-    try {
-      syncPushingRef.current = true;
-      setManualSyncAction('send');
-      setSyncStatus('syncing');
-      setServerDataError('');
-      const deviceId = syncDeviceId || await getSyncDeviceId();
-      if (!syncDeviceId) setSyncDeviceId(deviceId);
-      const response = await publishLocalDataToServer(deviceId, syncRevisionRef.current);
-      await AsyncStorage.removeItem(NEW_DEVICE_SERVER_PULL_PENDING_KEY);
-      setSyncStatus('online');
-      setServerDataReady(true);
-      setSyncReady(true);
-      Alert.alert('Server sync started', `This device data is now on the server at revision ${response.revision}.`);
-    } catch (error) {
-      syncDirtyRef.current = true;
-      setSyncStatus('offline');
-      setServerDataError(error instanceof Error ? error.message : 'Unable to send this device data.');
-      Alert.alert('Send failed', error instanceof Error ? error.message : 'Unable to send this device data.');
-    } finally {
-      syncPushingRef.current = false;
-      setManualSyncAction(null);
-    }
-  }
-
   if (!serverDataReady) {
     return (
       <SafeAreaProvider>
@@ -1257,7 +1221,7 @@ export default function App() {
               <Text style={styles.loginKicker}>LUCKY TRADERS</Text>
               <Text style={styles.loginTitle}>Server Sync Required</Text>
               <Text style={styles.loginSubtitle}>
-                This app loads data from the server only. Local saved data is not shown on startup.
+                This app loads only from the server database. Local saved data is not used.
               </Text>
             </View>
             <View style={[styles.loginCard, { marginTop: 18 }]}>
@@ -1278,14 +1242,6 @@ export default function App() {
               <Pressable style={styles.loginButton} onPress={retryServerFetch}>
                 <MaterialCommunityIcons name="refresh" size={18} color="#ffffff" />
                 <Text style={styles.loginButtonText}>Retry Server Fetch</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.loginButton, styles.loginSuccessButton, (!localDatabasesHydrated || syncPushingRef.current) && styles.navButtonDisabled]}
-                onPress={sendCurrentDeviceDataFromGate}
-                disabled={!localDatabasesHydrated || syncPushingRef.current}
-              >
-                <MaterialCommunityIcons name="upload-network-outline" size={18} color="#ffffff" />
-                <Text style={styles.loginButtonText}>{manualSyncAction === 'send' ? 'Sending Data...' : 'Send This Device Data'}</Text>
               </Pressable>
             </View>
           </View>

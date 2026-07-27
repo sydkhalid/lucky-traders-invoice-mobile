@@ -15,9 +15,9 @@ npm run typecheck
 
 Use Expo Go or an Android/iOS simulator to run the app.
 
-## Common Data Sync
+## Common Server Database Sync
 
-Device data is synced through one shared local NoSQL server. Start it on the computer before opening the app on phones/tablets:
+Device data is synced through one shared server database. Start it locally only when you are testing without the deployed Render service:
 
 ```bash
 npm run sync-server
@@ -29,7 +29,7 @@ This app is currently configured to use:
 https://lucky-traders-invoice-mobile.onrender.com
 ```
 
-All devices must be able to reach this URL. For local Wi-Fi/hotspot sharing, update `expo.extra.syncServerUrl` in `app.json` back to the computer IP.
+All devices must be able to reach this URL. For local Wi-Fi/hotspot testing, update `expo.extra.syncServerUrl` in `app.json` back to the computer IP.
 
 ## Online Sync Server on Render
 
@@ -43,9 +43,26 @@ Use these Render environment variables:
 
 ```text
 PORT=8095
-SYNC_DATA_DIR=/data/sync-data
+SYNC_STORAGE=postgres
+DATABASE_URL=postgres://user:password@host:5432/database
 SYNC_API_KEY=choose-a-long-private-key
 ```
+
+Use a hosted PostgreSQL database such as Render PostgreSQL, Neon, Supabase, or any managed Postgres service. If your provider requires SSL, keep the default. To disable SSL for a private/internal Postgres URL, add:
+
+```text
+DATABASE_SSL=false
+```
+
+If an older `sync-db.json` exists locally, the server can import it into PostgreSQL when the Postgres tables are empty. On Render, use the existing server data as the source before switching production traffic.
+
+To inspect the active database status, call:
+
+```text
+GET /database
+```
+
+This endpoint requires the same `X-API-Key` as `/sync` and returns the active storage type, masked database URL, revision, update time, record counts, and synced file count. It does not return API secrets.
 
 If `SYNC_API_KEY` is set on Render, rebuild the APK with the same key:
 
@@ -69,7 +86,8 @@ Use these Koyeb environment variables:
 
 ```text
 PORT=8095
-SYNC_DATA_DIR=/data/sync-data
+SYNC_STORAGE=postgres
+DATABASE_URL=postgres://user:password@host:5432/database
 SYNC_API_KEY=choose-a-long-private-key
 ```
 
@@ -91,7 +109,7 @@ The release APK will be under:
 android/app/build/outputs/apk/release/
 ```
 
-The mobile app still keeps a local AsyncStorage cache, but it also pushes and pulls these shared tables:
+The app reads the shared server database on startup. Business records are not loaded from device AsyncStorage and are not saved into the old local device database. The device keeps only technical sync metadata such as the device id. Changes made in the app are pushed back to the server database, and manual Device Sharing remains available for an explicit send/receive.
 
 ```text
 Users | Clients | Suppliers | Products | Purchases | Invoices | Payments | Supplier payments | Expenses | Employees | Salaries
@@ -101,7 +119,7 @@ Uploaded purchase PDFs and expense receipt/bill files are also synced through th
 
 ## Seed Login Users
 
-The login screen uses a local NoSQL-style user table in `src/nosqlUserTable.ts`, persisted with AsyncStorage under `lucky-traders.users.v1`.
+The login screen uses the user table from the server database. Seed users in `src/nosqlUserTable.ts` are only a compile-time fallback before the server snapshot is applied.
 
 ```text
 Admin: sydkhalid007 / Sydkhalid7@321
@@ -126,7 +144,7 @@ The Users menu is available for admin accounts and supports:
 Add manager users | View user accounts
 ```
 
-The Dashboard reads current local data from saved clients and invoices:
+The Dashboard reads current server-synced data from saved clients and invoices:
 
 ```text
 Client count | Invoice count | Invoice value | Today report | Recent invoices
@@ -140,13 +158,13 @@ The Inventory menu tracks product master and stock from purchases and invoices:
 Add product | Edit product | Product master | Purchase qty | Sold qty | Stock left | Stock value | Low/negative stock alerts
 ```
 
-The Supplier Pay menu tracks purchase bill payments and payable balances locally:
+The Supplier Pay menu tracks server-synced purchase bill payments and payable balances:
 
 ```text
 Add supplier payment | Partial payment | Purchase bill balance | Payable suppliers | Supplier ledger | Edit/delete payment
 ```
 
-The Payments menu tracks invoice receipts and pending balances locally:
+The Payments menu tracks server-synced invoice receipts and pending balances:
 
 ```text
 Add receipt | Partial payment | Invoice balance | Pending clients | Receipt ledger | Edit/delete receipt
@@ -164,13 +182,13 @@ The Documents menu gathers business documents in one place:
 Invoices | Purchase PDFs | Expense bills | Offer letters | Salary slips | Open/share document | Missing file status
 ```
 
-The Expenses menu stores expense bills locally with receipt references:
+The Expenses menu stores server-synced expense bills with receipt references:
 
 ```text
 Add expense | Upload receipt/bill | Edit expense | Open receipt | Delete expense | Expense summary
 ```
 
-The Employees menu stores employee and salary data locally:
+The Employees menu stores server-synced employee and salary data:
 
 ```text
 Add employee | Bank details | Offer letter PDF with logo/signature | Add salary | Edit salary | Salary slip PDF | Salary ledger | Payroll summary
@@ -214,7 +232,7 @@ sync-server.js
 
 ## Client Database
 
-Seed clients are stored in `src/nosqlClientTable.ts`. Client add/edit data is persisted locally with AsyncStorage under the NoSQL key `lucky-traders.clients.v1`.
+Seed clients are defined in `src/nosqlClientTable.ts`, but live client add/edit data is read from and saved back to the server database.
 
 The Clients menu supports:
 
@@ -224,7 +242,7 @@ Add client | Edit client | List clients | Use client for invoice
 
 ## Supplier Database
 
-Suppliers are stored locally with AsyncStorage under the NoSQL key `lucky-traders.suppliers.v1`.
+Suppliers are read from and saved back to the server database.
 
 The Suppliers menu supports:
 
@@ -236,19 +254,19 @@ PDF import uses the device file picker and reads supplier details from selectabl
 
 ## Purchase Database
 
-Purchase invoices are stored locally with AsyncStorage under the NoSQL key `lucky-traders.purchases.v1`.
+Purchase invoices are read from and saved back to the server database.
 
 The Purchases menu supports:
 
 Upload purchase PDF | Preview extracted fields | Show parsing errors | Auto-read supplier | Save purchase invoice | Edit purchase | Keep reference PDF | List purchases | Delete purchase
 
-Purchase PDF import currently targets the supplier invoice formats used by Inframat Alloys Pvt. Ltd. and FAB PIPES AND TUBES. Uploading a purchase shows a preview first, flags missing key fields, and only saves after confirmation. Saved purchases can be edited without losing the uploaded PDF reference. Saving or updating a purchase also creates or updates the supplier record using GSTIN, phone, email, or supplier name matching. A copy of the uploaded PDF is stored locally with the purchase record for later reference.
+Purchase PDF import currently targets the supplier invoice formats used by Inframat Alloys Pvt. Ltd. and FAB PIPES AND TUBES. Uploading a purchase shows a preview first, flags missing key fields, and only saves after confirmation. Saved purchases can be edited without losing the uploaded PDF reference. Saving or updating a purchase also creates or updates the supplier record using GSTIN, phone, email, or supplier name matching. A copy of the uploaded PDF is synced through the server for later reference.
 
 Purchase quantities are shown in Kg. Uploaded supplier PDFs that use MTS are converted to Kg, with the item rate converted to per-Kg for consistent reports and editing.
 
 ## Expense Database
 
-Expense bills are stored locally with AsyncStorage under the NoSQL key `lucky-traders.expenses.v1`.
+Expense bills are read from and saved back to the server database.
 
 The Expenses menu supports:
 
@@ -256,7 +274,7 @@ The Expenses menu supports:
 Add expense | Date picker | Category/vendor/details | GST paid | Payment mode | Upload bill/receipt | Edit expense | Open receipt | Delete expense
 ```
 
-Uploaded receipt or bill files are copied into local app storage and kept with the expense record for later reference.
+Uploaded receipt or bill files are synced through the server and kept with the expense record for later reference.
 
 ## Invoice Numbering
 
@@ -266,7 +284,7 @@ Invoice numbers are generated automatically starting at:
 #LT001
 ```
 
-Saved invoices are stored locally with AsyncStorage under `lucky-traders.invoices.v1`, and the next invoice number is stored under `lucky-traders.invoiceSequence.v1`. Pressing `Save Next`, `Print`, or `Share PDF` saves the current invoice and prepares the next number automatically.
+Saved invoices and the next invoice number are read from and saved back to the server database. Pressing `Save Next`, `Print`, or `Share PDF` saves the current invoice and prepares the next number automatically.
 
 The PDF invoices `#LS004` for KUMUTHA PLASTIC INDUSTRIES, `#LT005` for Prince Mathiyalagan, `#LT006` for AARADHANA TRADERS, `#LT007`/`#LT008` for Three Star Steels And Bottles, `#LT009` for NEW HINDUSTAN STEELS AND HARDWARES, `#LT010` for HINDUSTAN STEELS & CEMENT, and legacy Golden Steel invoices `#GS-019-KRI` through `#GS-024-KRI` are imported once into the saved invoice list from `src/nosqlInvoiceTable.ts`.
 

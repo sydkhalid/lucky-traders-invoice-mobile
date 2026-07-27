@@ -1,0 +1,9 @@
+{
+  "name": "lucky-traders-sync-server",
+  "version": "1.0.0",
+  "private": true,
+  "main": "sync-server.js",
+  "dependencies": {
+    "pg": "^8.22.0"
+  }
+}

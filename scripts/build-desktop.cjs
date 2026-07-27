@@ -6,7 +6,7 @@ const electronDistDir = path.join(rootDir, 'node_modules', 'electron', 'dist');
 const webDistDir = path.join(rootDir, 'dist');
 const desktopDir = path.join(rootDir, 'desktop');
 const assetsDir = path.join(rootDir, 'assets');
-const outputRoot = path.join(rootDir, 'desktop-release');
+const outputRoot = path.resolve(rootDir, process.env.DESKTOP_OUTPUT_ROOT || 'desktop-release');
 const outputAppDir = path.join(outputRoot, 'Lucky Traders Invoice');
 const resourcesAppDir = path.join(outputAppDir, 'resources', 'app');
 
